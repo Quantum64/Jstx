@@ -20,6 +20,13 @@ public class Opcode {
 		this.name = name;
 		this.chars = chars;
 		this.executor = executor;
+		if (chars.size() > 1) {
+			for (int i = 1; i < chars.size(); i++) {
+				if (chars.get(i) == Chars.conditionalEnd) {
+					throw new IllegalStateException("Cannot use conditional end opcode in sub instructions!");
+				}
+			}
+		}
 	}
 
 	protected Opcode(String name, Chars chars, Consumer<Stack> executor) {

@@ -4,30 +4,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
+
+import co.q64.jstx.lang.value.LiteralFactory;
+import co.q64.jstx.lang.value.LiteralFactoryFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
+import lombok.Getter;
 
-@Singleton
+@AutoFactory
 public class Stack {
-	protected @Inject Stack() {}
-
-	protected @Inject Null nul;
-
+	private Null nul;
+	private @Getter Program program;
 	private List<Value> stack = new ArrayList<>();
+	private LiteralFactory literal;
 
-	public void dup() {
-		if (stack.size() > 0) {
-			stack.add(stack.get(stack.size() - 1));
+	protected @Inject Stack(@Provided Null nul, @Provided LiteralFactoryFactory literal, Program program) {
+		this.nul = nul;
+		this.program = program;
+		this.literal = literal.getFactory();
+	}
+
+	public void dup(int depth) {
+		for (int i = 0; i < depth; i++) {
+			if (stack.size() > 0) {
+				stack.add(stack.get(stack.size() - 1));
+			}
 		}
 	}
 
-	public Value pop() {
-		if (stack.size() > 0) {
-			return stack.remove(stack.size() - 1);
+	public void dup() {
+		dup(1);
+	}
+
+	public Value pop(int depth) {
+		Value result = nul;
+		for (int i = 0; i < 1; i++) {
+			if (stack.size() > 0) {
+				result = stack.remove(stack.size() - 1);
+			}
 		}
-		return nul;
+		return result;
+	}
+
+	public Value pop() {
+		return pop(1);
+	}
+
+	public void clr() {
+		stack.clear();
 	}
 
 	public Value peek(int depth) {
@@ -51,5 +78,9 @@ public class Stack {
 
 	public void push(Value value) {
 		stack.add(value);
+	}
+
+	public void push(Object value) {
+		stack.add(literal.create(value.toString()));
 	}
 }
