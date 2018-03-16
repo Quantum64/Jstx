@@ -6,7 +6,6 @@ import java.util.List;
 public class Test {
 	public static final List<String> PROGRAM = Arrays.asList(
 			// @formatter:off
-			"flatten hard",
 			"iterate",
 			"ldr a",
 			"ldr o",
