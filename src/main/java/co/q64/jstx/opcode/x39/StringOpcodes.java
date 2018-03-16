@@ -47,6 +47,7 @@ public class StringOpcodes implements OpcodeRegistry {
 
 		op.reg("string.reverse", code(Chars.xf0), stack -> stack.push(new StringBuilder(stack.pop().toString()).reverse()));
 		op.reg("string.reverseconcat", code(Chars.xf1), stack -> stack.push(stack.pop().toString().concat(stack.pop().toString())));
+		op.reg("string.charValue", code(Chars.xfa), stack -> stack.push(((int) stack.pop().asChar())));
 	}
 
 	private List<Chars> code(Chars code) {

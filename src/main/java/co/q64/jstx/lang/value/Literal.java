@@ -21,6 +21,10 @@ public class Literal implements Value {
 		this(literal.toString());
 	}
 
+	protected Literal(List<Value> list) {
+		this(list.stream().map(Object::toString).collect(Collectors.joining(",")));
+	}
+
 	@Override
 	public boolean compare(Value value, CompareType type) {
 		if (isFloat() && value.isFloat()) {
@@ -178,7 +182,13 @@ public class Literal implements Value {
 		try {
 			return Integer.parseInt(literal);
 		} catch (Exception e) {}
-		return 0;
+		if (isBoolean()) {
+			return asBoolean() ? 1 : 0;
+		}
+		if (literal.length() == 1) {
+			return literal.charAt(0);
+		}
+		return literal.length();
 	}
 
 	@Override
@@ -186,7 +196,13 @@ public class Literal implements Value {
 		try {
 			return Long.parseLong(literal);
 		} catch (Exception e) {}
-		return 0;
+		if (isBoolean()) {
+			return asBoolean() ? 1 : 0;
+		}
+		if (literal.length() <= 1) {
+			return literal.charAt(0);
+		}
+		return literal.length();
 	}
 
 	@Override

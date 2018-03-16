@@ -20,7 +20,7 @@ public class BasicOpcodes implements OpcodeRegistry {
 		op.reg("iterate", Chars.x2a, stack -> {
 			stack.getProgram().iterate(false);
 		});
-		op.reg("iterate stack", Chars.x2a, stack -> {
+		op.reg("iterate stack", Chars.x2b, stack -> {
 			stack.getProgram().iterate(true);
 		});
 		op.reg("end", Chars.x2c, stack -> {

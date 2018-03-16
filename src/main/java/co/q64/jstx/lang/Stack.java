@@ -95,4 +95,12 @@ public class Stack {
 	public void push(Object value) {
 		stack.add(literal.create(value.toString()));
 	}
+
+	public void push(List<Value> values) {
+		stack.add(literal.create(values));
+	}
+
+	public int size() {
+		return stack.size();
+	}
 }

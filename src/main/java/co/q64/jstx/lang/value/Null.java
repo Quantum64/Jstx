@@ -1,6 +1,6 @@
 package co.q64.jstx.lang.value;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,7 +20,7 @@ public class Null implements Value {
 
 	@Override
 	public List<Value> iterate() {
-		return Collections.emptyList();
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -50,22 +50,22 @@ public class Null implements Value {
 
 	@Override
 	public boolean asBoolean() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isBoolean() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isFloat() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isInteger() {
-		return false;
+		return true;
 	}
 
 	@Override
