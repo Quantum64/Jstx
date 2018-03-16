@@ -21,7 +21,6 @@ public class StandardOpcodes implements OpcodeRegistry {
 	@Override
 	public void init(Opcodes op) {
 		op.accept(of.create("endif", Chars.xff, stack -> {}));
-		op.accept(of.create("nop", Chars.NULL, stack -> {}));
 		op.accept(of.create("load 0", Chars.x00, stack -> stack.push(literal.create("0"))));
 		op.accept(of.create("load 1", Chars.x01, stack -> stack.push(literal.create("1"))));
 		op.accept(of.create("load 2", Chars.x02, stack -> stack.push(literal.create("2"))));
@@ -45,9 +44,9 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.accept(of.create("pop 2", Chars.x1a, stack -> stack.pop(2)));
 		op.accept(of.create("clr", Chars.x1b, stack -> stack.clr()));
 		op.accept(of.create("dup", Chars.x1c, stack -> stack.dup()));
-		op.accept(of.create("dup 2", Chars.x1d, stack -> stack.dup(2)));
-		op.accept(of.create("dup 3", Chars.x1e, stack -> stack.dup(3)));
-		op.accept(of.create("dup 4", Chars.x1f, stack -> stack.dup(4)));
+		op.accept(of.create("swp", Chars.x1d, stack -> stack.swap()));
+		op.accept(of.create("load true", Chars.x1e, stack -> stack.push("true")));
+		op.accept(of.create("load false", Chars.x1f, stack -> stack.push("false")));
 		op.accept(of.create("ldr a", Chars.x20, stack -> stack.push(stack.getProgram().getRegisters().getA())));
 		op.accept(of.create("ldr b", Chars.x21, stack -> stack.push(stack.getProgram().getRegisters().getB())));
 		op.accept(of.create("ldr c", Chars.x22, stack -> stack.push(stack.getProgram().getRegisters().getC())));
@@ -58,7 +57,7 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.accept(of.create("sdr b", Chars.x27, stack -> stack.getProgram().getRegisters().setB(stack.pop())));
 		op.accept(of.create("sdr c", Chars.x28, stack -> stack.getProgram().getRegisters().setC(stack.pop())));
 		op.accept(of.create("sdr d", Chars.x29, stack -> stack.getProgram().getRegisters().setD(stack.pop())));
-		// 2a - 37 conditional opcodes
+		// 2a - 37 basic opcodes
 
 	}
 }

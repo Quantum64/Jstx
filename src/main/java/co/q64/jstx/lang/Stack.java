@@ -41,9 +41,21 @@ public class Stack {
 
 	public Value pop(int depth) {
 		Value result = nul;
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < depth; i++) {
 			if (stack.size() > 0) {
 				result = stack.remove(stack.size() - 1);
+			}
+		}
+		return result;
+	}
+
+	public Value pull(int depth) {
+		Value result = nul;
+		for (int i = 0; i < depth; i++) {
+			if (stack.size() > 0) {
+				if (result == nul) {
+					result = stack.remove(stack.size() - 1);
+				}
 			}
 		}
 		return result;
@@ -58,14 +70,14 @@ public class Stack {
 	}
 
 	public Value peek(int depth) {
-		if (stack.size() > depth) {
-			return stack.remove(stack.size() - depth - 1);
+		if (stack.size() >= depth) {
+			return stack.get(stack.size() - depth);
 		}
 		return nul;
 	}
 
 	public Value peek() {
-		return peek(0);
+		return peek(1);
 	}
 
 	public void swap() {

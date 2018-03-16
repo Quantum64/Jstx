@@ -10,6 +10,7 @@ import com.google.auto.factory.Provided;
 import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.lang.value.LiteralFactoryFactory;
 import co.q64.jstx.lang.value.Value;
+import co.q64.jstx.opcode.Chars;
 import lombok.Getter;
 
 @AutoFactory
@@ -117,6 +118,26 @@ public class Program {
 			crash("Jump to node attempted to jump outside the program! (Instruction " + (instruction - 1) + " JMP to " + node + ")");
 		}
 		instruction = node;
+	}
+
+	public void jumpToEndif() {
+		int debt = 0;
+		for (int i = instruction; i < instructions.size(); i++) {
+			Instruction ins = instructions.get(i);
+			if (ins.getOpcode() == null) {
+				continue;
+			}
+			if (Chars.conditional.contains(ins.getOpcode().getChars().get(0))) {
+				debt++;
+			}
+			if (ins.getOpcode().getChars().get(0) == Chars.ifElse || ins.getOpcode().getChars().get(0) == Chars.conditionalEnd) {
+				if (debt <= 0) {
+					instruction = i;
+					return;
+				}
+				debt--;
+			}
+		}
 	}
 
 	public void warn(String message) {

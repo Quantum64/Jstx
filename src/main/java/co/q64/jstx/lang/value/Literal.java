@@ -2,6 +2,7 @@ package co.q64.jstx.lang.value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
 
@@ -71,6 +72,23 @@ public class Literal implements Value {
 	@Override
 	public List<Value> iterate() {
 		List<Value> result = new ArrayList<>();
+		List<String> elements = new ArrayList<>();
+		StringBuilder currentElement = new StringBuilder();
+		char[] chars = literal.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			if (String.valueOf(chars[i]).equals(",")) {
+				elements.add(currentElement.toString());
+				currentElement = new StringBuilder();
+				continue;
+			}
+			currentElement.append(chars[i]);
+		}
+		if (elements.size() > 0) {
+			if (currentElement.length() > 0) {
+				elements.add(currentElement.toString());
+			}
+			return elements.stream().map(Literal::new).collect(Collectors.toList());
+		}
 		if (isInteger()) {
 			for (long l = 0; l < asLong(); l++) {
 				result.add(new Literal(l));
@@ -126,7 +144,7 @@ public class Literal implements Value {
 		case DIVIDE:
 			return new Literal(toString() + value.toString());
 		case MINUS:
-			return new Literal(toString() + value.toString());
+			return new Literal(value.toString() + toString());
 		case MULTIPLY:
 			return new Literal(toString() + value.toString());
 		case PLUS:
@@ -163,6 +181,7 @@ public class Literal implements Value {
 		return 0;
 	}
 
+	@Override
 	public long asLong() {
 		try {
 			return Long.parseLong(literal);
@@ -170,6 +189,7 @@ public class Literal implements Value {
 		return 0;
 	}
 
+	@Override
 	public double asDouble() {
 		try {
 			return Double.parseDouble(literal);
@@ -177,6 +197,7 @@ public class Literal implements Value {
 		return 0;
 	}
 
+	@Override
 	public boolean asBoolean() {
 		try {
 			return literal.equalsIgnoreCase("true");

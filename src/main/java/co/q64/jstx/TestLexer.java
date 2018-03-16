@@ -1,6 +1,5 @@
 package co.q64.jstx;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -26,34 +25,10 @@ public class TestLexer {
 	}
 
 	private void start() {
-		String pr = compiler.compile(Arrays.asList(
-				// @formatter:off
-				"load -1",
-				"sdr a",
-				"load This is a test", // Load the test string
-				"iterate stack", // Iterate over each character on the stack
-				"dup", // Duplicate the current character on the stack
-				"load a", // Loads the letter a on to the stack
-				"if =", // Is the current letter an a?
-				"pop", // Remove the letter from the stack
-				"load -1",
-				"ldr a",
-				"*",
-				"sdr a",
-				"endif",
-				"else",
-				"ldr a",
-				"load 1",
-				"if =",
-				"string.toUpperCase",
-				"println",
-				"endif",
-				"end",
-				"terminate"
-				// @formatter:on
-				));
+		String pr = compiler.compile(Test.PROGRAM);
 		System.out.println(pr);
 		List<Instruction> insns = cl.parse(pr);
+		insns.forEach(i -> System.out.println(i.getOpcode() == null ? "load value" : i.getOpcode().getName()));
 		pf.create(insns).execute();
 	}
 

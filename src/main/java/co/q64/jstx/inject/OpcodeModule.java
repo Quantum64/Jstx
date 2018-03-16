@@ -4,7 +4,9 @@ import co.q64.jstx.opcode.OpcodeRegistry;
 import co.q64.jstx.opcode.x00.BasicOpcodes;
 import co.q64.jstx.opcode.x00.ConditionalOpcodes;
 import co.q64.jstx.opcode.x00.StandardOpcodes;
+import co.q64.jstx.opcode.x38.MathOpcodes;
 import co.q64.jstx.opcode.x39.StringOpcodes;
+import co.q64.jstx.opcode.x3a.ListOpcodes;
 import dagger.Binds;
 import dagger.Module;
 import dagger.multibindings.IntoSet;
@@ -16,5 +18,7 @@ public interface OpcodeModule {
 	@Binds @IntoSet OpcodeRegistry bindConditional(ConditionalOpcodes co);
 	@Binds @IntoSet OpcodeRegistry bindBasic(BasicOpcodes bo);
 	@Binds @IntoSet OpcodeRegistry bindString(StringOpcodes so);
+	@Binds @IntoSet OpcodeRegistry bindMath(MathOpcodes so);
+	@Binds @IntoSet OpcodeRegistry bindList(ListOpcodes so);
 	// @formatter:on
 }

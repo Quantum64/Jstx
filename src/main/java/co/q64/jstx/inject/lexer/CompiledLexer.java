@@ -17,8 +17,6 @@ import co.q64.jstx.opcode.Opcodes;
 
 @Singleton
 public class CompiledLexer {
-	private static final List<Chars> CONDITIONAL = Arrays.asList(Chars.ifEqual, Chars.ifNotEqual, Chars.ifGreater, Chars.ifGreaterOrEqual, Chars.ifLess, Chars.ifLessOrEqual, Chars.ifElse);
-
 	protected @Inject CompiledLexer() {}
 
 	protected @Inject InstructionFactory instructionFactory;
@@ -90,7 +88,7 @@ public class CompiledLexer {
 			String op = opcodeQueue + c;
 			Opcode oc = null;
 			for (Opcode opcode : opcodes.all()) {
-				if (op.length() >= opcode.getChars().size()) {
+				if (op.length() == opcode.getChars().size()) {
 					boolean match = true;
 					int i = 0;
 					for (Chars ch : opcode.getChars()) {
@@ -109,27 +107,8 @@ public class CompiledLexer {
 				opcodeQueue += c;
 				continue;
 			}
-			Chars first = oc.getChars().get(0);
+			opcodeQueue = "";
 			Instruction instruction = instructionFactory.create(oc);
-			if (CONDITIONAL.contains(first)) {
-				// Scan for an endif opcode before the next conditional
-				int jump = 0;
-				int endifDebt = 0;
-				for (int i = index + 1; i < chars.length; i++) {
-					String ch = String.valueOf(chars[i]);
-					if (CONDITIONAL.stream().map(Chars::getCharacter).collect(Collectors.toList()).contains(ch)) {
-						endifDebt++;
-					}
-					if (Chars.conditionalEnd.getCharacter().equals(ch)) {
-						endifDebt--;
-						if (endifDebt <= 0) {
-							instruction.setLength(jump);
-						}
-						break;
-					}
-					jump++;
-				}
-			}
 			instructions.add(instruction);
 		}
 		return instructions;

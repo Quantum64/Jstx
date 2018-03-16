@@ -25,7 +25,7 @@ public class Null implements Value {
 
 	@Override
 	public Value operate(Value value, OperateType type) {
-		return this;
+		return value;
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class Null implements Value {
 
 	@Override
 	public String toString() {
-		return "null";
+		return "";
 	}
 
 	@Override

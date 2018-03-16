@@ -33,8 +33,7 @@ public class ConditionalOpcodes implements OpcodeRegistry {
 		op.accept(of.create("else", Chars.x18, stack -> {
 			Program p = stack.getProgram();
 			if (p.isLastConditional()) {
-				Instruction insn = p.getInstructions().get(p.getInstruction() - 1);
-				p.jumpToNode(p.getInstruction() + insn.getLength() -1);
+				p.jumpToEndif();
 			}
 		}));
 	}
@@ -48,7 +47,6 @@ public class ConditionalOpcodes implements OpcodeRegistry {
 			return;
 		}
 		p.updateLastConditional(false);
-		Instruction insn = p.getInstructions().get(p.getInstruction() - 1);
-		p.jumpToNode(p.getInstruction() + insn.getLength() - 1);
+		p.jumpToEndif();
 	}
 }
