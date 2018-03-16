@@ -15,6 +15,8 @@ public interface Value {
 	public int asInt();
 
 	public long asLong();
+	
+	public char asChar();
 
 	public double asDouble();
 

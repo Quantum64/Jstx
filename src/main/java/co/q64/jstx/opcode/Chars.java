@@ -272,7 +272,6 @@ public enum Chars {
 	private String character;
 
 	private static final Chars[] chars = Chars.values();
-	public static final List<Chars> conditional = Arrays.asList(Chars.ifEqual, Chars.ifNotEqual, Chars.ifGreater, Chars.ifGreaterOrEqual, Chars.ifLess, Chars.ifLessOrEqual, Chars.ifElse);
 	public static final Chars literalBegin = x0b;
 	public static final Chars literalUncompressed = x0c;
 	public static final Chars literalCompressionMode1 = x0d;
@@ -288,6 +287,7 @@ public enum Chars {
 	public static final Chars ifLess = x16;
 	public static final Chars ifLessOrEqual = x17;
 	public static final Chars ifElse = x18;
+	public static final List<Chars> conditional = Arrays.asList(Chars.ifEqual, Chars.ifNotEqual, Chars.ifGreater, Chars.ifGreaterOrEqual, Chars.ifLess, Chars.ifLessOrEqual, Chars.ifElse);
 
 	public static Chars fromCode(String code) {
 		for (Chars c : chars) {

@@ -3,7 +3,6 @@ package co.q64.jstx.inject.lexer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,48 +41,50 @@ public class CompiledLexer {
 		char[] chars = program.toCharArray();
 		for (int index = 0; index < chars.length; index++) {
 			String c = String.valueOf(chars[index]);
-			if (Chars.literalBegin.getCharacter().equals(c)) {
-				readingLiteral = true;
-				currentLiteral = new StringBuilder();
-				continue;
-			}
-			if (Chars.literalUncompressed.getCharacter().equals(c)) {
-				readingLiteral = false;
-				instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
-				continue;
-			}
-			if (Chars.literalCompressionMode1.getCharacter().equals(c)) {
-				readingLiteral = false;
-				continue;
-			}
-			if (Chars.literalCompressionMode2.getCharacter().equals(c)) {
-				readingLiteral = false;
-				continue;
-			}
-			if (readingLiteral) {
-				currentLiteral.append(c);
-				continue;
-			}
-			if (readingPair) {
-				currentLiteral.append(c);
-				charsToRead--;
-				if (charsToRead == 0) {
-					readingPair = false;
-					instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
+			if (opcodeQueue.isEmpty()) {
+				if (Chars.literalBegin.getCharacter().equals(c)) {
+					readingLiteral = true;
+					currentLiteral = new StringBuilder();
+					continue;
 				}
-				continue;
-			}
-			if (Chars.literalPair.getCharacter().equals(c)) {
-				currentLiteral = new StringBuilder();
-				readingPair = true;
-				charsToRead = 2;
-				continue;
-			}
-			if (Chars.literalSingle.getCharacter().equals(c)) {
-				currentLiteral = new StringBuilder();
-				readingPair = true;
-				charsToRead = 1;
-				continue;
+				if (Chars.literalUncompressed.getCharacter().equals(c)) {
+					readingLiteral = false;
+					instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
+					continue;
+				}
+				if (Chars.literalCompressionMode1.getCharacter().equals(c)) {
+					readingLiteral = false;
+					continue;
+				}
+				if (Chars.literalCompressionMode2.getCharacter().equals(c)) {
+					readingLiteral = false;
+					continue;
+				}
+				if (readingLiteral) {
+					currentLiteral.append(c);
+					continue;
+				}
+				if (readingPair) {
+					currentLiteral.append(c);
+					charsToRead--;
+					if (charsToRead == 0) {
+						readingPair = false;
+						instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
+					}
+					continue;
+				}
+				if (Chars.literalPair.getCharacter().equals(c)) {
+					currentLiteral = new StringBuilder();
+					readingPair = true;
+					charsToRead = 2;
+					continue;
+				}
+				if (Chars.literalSingle.getCharacter().equals(c)) {
+					currentLiteral = new StringBuilder();
+					readingPair = true;
+					charsToRead = 1;
+					continue;
+				}
 			}
 			String op = opcodeQueue + c;
 			Opcode oc = null;

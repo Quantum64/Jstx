@@ -29,7 +29,7 @@ public class TestLexer {
 		System.out.println(pr);
 		List<Instruction> insns = cl.parse(pr);
 		insns.forEach(i -> System.out.println(i.getOpcode() == null ? "load value" : i.getOpcode().getName()));
-		pf.create(insns).execute();
+		pf.create(insns, Test.ARGS).execute();
 	}
 
 	@Singleton

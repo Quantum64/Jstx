@@ -204,4 +204,12 @@ public class Literal implements Value {
 		} catch (Exception e) {}
 		return false;
 	}
+
+	@Override
+	public char asChar() {
+		if (literal.length() > 0) {
+			return literal.charAt(0);
+		}
+		return 0;
+	}
 }

@@ -67,4 +67,9 @@ public class Null implements Value {
 	public boolean isInteger() {
 		return false;
 	}
+
+	@Override
+	public char asChar() {
+		return 0;
+	}
 }

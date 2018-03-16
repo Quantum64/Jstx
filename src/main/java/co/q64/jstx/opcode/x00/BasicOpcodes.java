@@ -4,8 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.inject.types.OperateType;
-import co.q64.jstx.lang.Instruction;
-import co.q64.jstx.lang.Program;
 import co.q64.jstx.opcode.Chars;
 import co.q64.jstx.opcode.OpcodeFactory;
 import co.q64.jstx.opcode.OpcodeRegistry;
@@ -19,47 +17,47 @@ public class BasicOpcodes implements OpcodeRegistry {
 
 	@Override
 	public void init(Opcodes op) {
-		op.accept(of.create("iterate", Chars.x2a, stack -> {
+		op.reg("iterate", Chars.x2a, stack -> {
 			stack.getProgram().iterate(false);
-		}));
-		op.accept(of.create("iterate stack", Chars.x2a, stack -> {
+		});
+		op.reg("iterate stack", Chars.x2a, stack -> {
 			stack.getProgram().iterate(true);
-		}));
-		op.accept(of.create("end", Chars.x2c, stack -> {
+		});
+		op.reg("end", Chars.x2c, stack -> {
 			stack.getProgram().end();
-		}));
-		op.accept(of.create("print", Chars.x2d, stack -> {
+		});
+		op.reg("print", Chars.x2d, stack -> {
 			System.out.print(stack.pop());
-		}));
-		op.accept(of.create("println", Chars.x2e, stack -> {
+		});
+		op.reg("println", Chars.x2e, stack -> {
 			System.out.println(stack.pop());
-		}));
-		op.accept(of.create("exit", Chars.x2f, stack -> {
+		});
+		op.reg("exit", Chars.x2f, stack -> {
 			stack.getProgram().terminate();
-		}));
-		op.accept(of.create("terminate", Chars.x30, stack -> {
+		});
+		op.reg("terminate", Chars.x30, stack -> {
 			stack.getProgram().terminateNoPrint();
-		}));
-		op.accept(of.create("restart", Chars.x31, stack -> {
+		});
+		op.reg("restart", Chars.x31, stack -> {
 			stack.getProgram().jumpToNode(1);
-		}));
-		op.accept(of.create("jump", Chars.x32, stack -> {
+		});
+		op.reg("jump", Chars.x32, stack -> {
 			stack.getProgram().jumpToNode(stack.pop().asInt());
-		}));
-		op.accept(of.create("+", Chars.x33, stack -> {
-			stack.push(stack.pop().operate(stack.pop(), OperateType.PLUS));
-		}));
-		op.accept(of.create("-", Chars.x34, stack -> {
-			stack.push(stack.pop().operate(stack.pop(), OperateType.MINUS));
-		}));
-		op.accept(of.create("*", Chars.x35, stack -> {
-			stack.push(stack.pop().operate(stack.pop(), OperateType.MULTIPLY));
-		}));
-		op.accept(of.create("/", Chars.x36, stack -> {
-			stack.push(stack.pop().operate(stack.pop(), OperateType.DIVIDE));
-		}));
-		op.accept(of.create("%", Chars.x37, stack -> {
-			stack.push(stack.pop().operate(stack.pop(), OperateType.DIVIDE));
-		}));
+		});
+		op.reg("+", Chars.x33, stack -> {
+			stack.push(stack.peek(2).operate(stack.pull(2), OperateType.PLUS));
+		});
+		op.reg("-", Chars.x34, stack -> {
+			stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MINUS));
+		});
+		op.reg("*", Chars.x35, stack -> {
+			stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MULTIPLY));
+		});
+		op.reg("/", Chars.x36, stack -> {
+			stack.push(stack.peek(2).operate(stack.pull(2), OperateType.DIVIDE));
+		});
+		op.reg("%", Chars.x37, stack -> {
+			stack.push(stack.peek(2).asInt() % stack.pull(2).asInt());
+		});
 	}
 }

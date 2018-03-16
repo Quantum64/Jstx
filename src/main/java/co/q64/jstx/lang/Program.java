@@ -31,12 +31,14 @@ public class Program {
 	private int iteratorIndex;
 	private Queue<Value> iterator = new LinkedList<>();
 	private @Getter boolean lastConditional = false;
+	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided LiteralFactoryFactory literal, List<Instruction> instructions) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided LiteralFactoryFactory literal, List<Instruction> instructions, String[] args) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
 		this.literal = literal.getFactory();
 		this.instructions = instructions;
+		this.args = args;
 		instructions.add(0, new Instruction());
 	}
 
@@ -48,6 +50,9 @@ public class Program {
 		this.instruction = 0;
 		this.iteratorIndex = 0;
 		this.iteratorLine = 0;
+		for (String s : args) {
+			stack.push(s);
+		}
 		while (true) {
 			if (terminated) {
 				break;
