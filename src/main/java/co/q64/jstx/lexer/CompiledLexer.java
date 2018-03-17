@@ -1,4 +1,4 @@
-package co.q64.jstx.inject.lexer;
+package co.q64.jstx.lexer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

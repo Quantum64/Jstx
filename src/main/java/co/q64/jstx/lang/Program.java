@@ -1,15 +1,15 @@
 package co.q64.jstx.lang;
 
-import java.util.LinkedList;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
-import java.util.Queue;
 
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 
+import co.q64.jstx.factory.IteratorFactoryFactory;
+import co.q64.jstx.factory.LiteralFactoryFactory;
 import co.q64.jstx.lang.value.LiteralFactory;
-import co.q64.jstx.lang.value.LiteralFactoryFactory;
-import co.q64.jstx.lang.value.Value;
 import co.q64.jstx.opcode.Chars;
 import lombok.Getter;
 
@@ -18,6 +18,7 @@ public class Program {
 	private StackFactory stackFactory;
 	private RegistersFactory registersFactory;
 	private LiteralFactory literal;
+	private IteratorFactory iteratorFactory;
 
 	private @Getter List<Instruction> instructions;
 	private @Getter Stack stack;
@@ -26,16 +27,14 @@ public class Program {
 	private @Getter int instruction;
 	private boolean printOnTerminate;
 	private boolean terminated;
-	private boolean iteratorStack;
-	private int iteratorLine;
-	private int iteratorIndex;
-	private Queue<Value> iterator = new LinkedList<>();
-	private @Getter boolean lastConditional = false;
+	private Deque<Iterator> iterators = new ArrayDeque<>();
+	private @Getter boolean lastConditional = false; // TODO replace with stack?
 	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided LiteralFactoryFactory literal, List<Instruction> instructions, String[] args) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided LiteralFactoryFactory literal, @Provided IteratorFactoryFactory iteratorFactory, List<Instruction> instructions, String[] args) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
+		this.iteratorFactory = iteratorFactory.getFactory();
 		this.literal = literal.getFactory();
 		this.instructions = instructions;
 		this.args = args;
@@ -48,8 +47,7 @@ public class Program {
 		this.printOnTerminate = true;
 		this.terminated = false;
 		this.instruction = 0;
-		this.iteratorIndex = 0;
-		this.iteratorLine = 0;
+		this.iterators.clear();
 		for (String s : args) {
 			stack.push(s);
 		}
@@ -70,28 +68,20 @@ public class Program {
 	}
 
 	public void iterate(boolean onStack) {
-		iteratorStack = onStack;
-		iterator.clear();
-		iterator.addAll(stack.pop().iterate());
-		if (iterator.size() > 0) {
-			iteratorIndex = 0;
-			iteratorLine = instruction;
-			registers.setI(literal.create(String.valueOf(iteratorIndex)));
-			registers.setO(iterator.poll());
-			if (iteratorStack) {
-				stack.push(registers.getO());
-			}
+		Iterator itr = iteratorFactory.create(this, instruction, onStack);
+		if (itr.next()) {
+			// Special case - if the iterator has nothing to iterate
+			// over we will just jump to the end of the iterator
+			jumpToEnd();
+			return;
 		}
+		iterators.push(itr);
 	}
 
 	public void end() {
-		if (iterator.size() > 0) {
-			instruction = iteratorLine;
-			iteratorIndex++;
-			registers.setI(literal.create(String.valueOf(iteratorIndex)));
-			registers.setO(iterator.poll());
-			if (iteratorStack) {
-				stack.push(registers.getO());
+		if (iterators.size() > 0) {
+			if (iterators.peek().next()) {
+				iterators.poll();
 			}
 		}
 	}
@@ -135,12 +125,29 @@ public class Program {
 			if (Chars.conditional.contains(ins.getOpcode().getChars().get(0))) {
 				debt++;
 			}
-			if (ins.getOpcode().getChars().get(0) == Chars.ifElse || ins.getOpcode().getChars().get(0) == Chars.conditionalEnd) {
+			if (ins.getOpcode().getChars().size() == 1 && (ins.getOpcode().getChars().get(0) == Chars.ifElse || ins.getOpcode().getChars().get(0) == Chars.conditionalEnd)) {
 				if (debt <= 0) {
 					instruction = i;
 					return;
 				}
 				debt--;
+			}
+		}
+		// If no endif instruction is found then we will simply jump over the next line.
+		// This special case should only be used for base-layer conditionals. Nested conditionals will
+		// see the endif statement meant for the base-layer conditional and jump there instead
+		instruction++;
+	}
+
+	private void jumpToEnd() {
+		for (int i = instruction; i < instructions.size(); i++) {
+			Instruction ins = instructions.get(i);
+			if (ins.getOpcode() == null) {
+				continue;
+			}
+			if (ins.getOpcode().getChars().size() == 1 && ins.getOpcode().getChars().get(0) == Chars.x2c /* end opcode */) {
+				instruction = i + 1; // Don't actually run the end instruction
+				return;
 			}
 		}
 	}

@@ -8,8 +8,8 @@ import javax.inject.Inject;
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 
+import co.q64.jstx.factory.LiteralFactoryFactory;
 import co.q64.jstx.lang.value.LiteralFactory;
-import co.q64.jstx.lang.value.LiteralFactoryFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
 import lombok.Getter;

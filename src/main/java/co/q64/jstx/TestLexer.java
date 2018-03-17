@@ -7,9 +7,9 @@ import javax.inject.Singleton;
 
 import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.inject.OpcodeModule;
-import co.q64.jstx.inject.lexer.CompiledLexer;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.ProgramFactory;
+import co.q64.jstx.lexer.CompiledLexer;
 import dagger.Component;
 
 @Singleton

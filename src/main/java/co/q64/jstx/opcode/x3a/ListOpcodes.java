@@ -33,7 +33,12 @@ public class ListOpcodes implements OpcodeRegistry {
 			stack.push(vals.stream().map(Object::toString).collect(Collectors.joining(",")));
 		});
 		op.reg("list.range", code(Chars.x02), stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.joining(","))));
-		op.reg("list.set", code(Chars.x03), stack -> {
+		op.reg("list.reverseRange", code(Chars.x03), stack -> {
+			int to = stack.pop().asInt();
+			int from = stack.pop().asInt();
+			stack.push(IntStream.rangeClosed(from, to).map(i -> to - i + from - 1).boxed().map(Object::toString).collect(Collectors.joining(",")));
+		});
+		op.reg("list.set", code(Chars.x04), stack -> {
 			int index = stack.pop().asInt();
 			Value target = stack.pop();
 			List<Value> list = stack.pop().iterate();
@@ -48,7 +53,7 @@ public class ListOpcodes implements OpcodeRegistry {
 			}
 			stack.push(list);
 		});
-		op.reg("list.get", code(Chars.x04), stack -> {
+		op.reg("list.get", code(Chars.x05), stack -> {
 			int index = stack.pop().asInt();
 			List<Value> list = stack.pop().iterate();
 			if (index >= list.size()) {

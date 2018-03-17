@@ -6,6 +6,22 @@ import java.util.List;
 public class Test {
 	public static final List<String> PROGRAM = Arrays.asList(
 			// @formatter:off
+			"load 1",
+			"load 10",
+			"list.range",
+			"iterate stack",
+			"load 11",
+			"list.range",
+			"iterate stack",
+			"println",
+			"end",
+			"end",
+			"terminate"
+			// @formatter:on
+			);
+	
+	public static final List<String> STRING_COST = Arrays.asList(
+			// @formatter:off
 			"iterate",
 			"ldr a",
 			"ldr o",
@@ -98,5 +114,5 @@ public class Test {
 	// @formatter:on
 	);
 
-	public static final String[] ARGS = { "Programming Puzzles & Code Golf" };
+	public static final String[] ARGS = { "aaab" };
 }
