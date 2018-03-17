@@ -16,6 +16,7 @@ public class Test {
 			"println",
 			"end",
 			"end",
+			"string.format",
 			"terminate"
 			// @formatter:on
 			);

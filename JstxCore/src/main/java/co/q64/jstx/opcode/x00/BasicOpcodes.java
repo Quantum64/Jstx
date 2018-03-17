@@ -27,10 +27,10 @@ public class BasicOpcodes implements OpcodeRegistry {
 			stack.getProgram().end();
 		});
 		op.reg("print", Chars.x2d, stack -> {
-			System.out.print(stack.pop());
+			stack.getProgram().getOutput().print(stack.pop().toString());
 		});
 		op.reg("println", Chars.x2e, stack -> {
-			System.out.println(stack.pop());
+			stack.getProgram().getOutput().println(stack.pop().toString());
 		});
 		op.reg("exit", Chars.x2f, stack -> {
 			stack.getProgram().terminate();

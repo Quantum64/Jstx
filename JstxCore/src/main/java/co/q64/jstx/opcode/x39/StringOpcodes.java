@@ -29,7 +29,7 @@ public class StringOpcodes implements OpcodeRegistry {
 		op.reg("string.endsWith", code(Chars.x05), stack -> stack.push(stack.peek(2).toString().endsWith(stack.pull(2).toString())));
 		op.reg("string.equals", code(Chars.x06), stack -> stack.push(stack.peek(2).toString().equals(stack.pull(2).toString())));
 		op.reg("string.equalsIgnoreCase", code(Chars.x07), stack -> stack.push(stack.peek(2).toString().equalsIgnoreCase(stack.pull(2).toString())));
-		op.reg("string.format", code(Chars.x08), stack -> stack.push(String.format(stack.peek(2).toString(), stack.pull(2).iterate().toArray())));
+		//op.reg("string.format", code(Chars.x08), stack -> stack.push(String.format(stack.peek(2).toString(), stack.pull(2).iterate().toArray()))); // GWT does not like this
 		op.reg("string.getBytes", code(Chars.x09), stack -> stack.push(IntStream.range(0, stack.peek().toString().getBytes().length).map(i -> stack.pop().toString().getBytes()[i]).boxed().map(Object::toString).collect(Collectors.joining(","))));
 		op.reg("string.hashCode", code(Chars.x0a), stack -> stack.push(stack.pop().toString().hashCode()));
 		op.reg("string.indexOf", code(Chars.x0b), stack -> stack.push(stack.peek(2).toString().indexOf(stack.pull(2).asChar())));

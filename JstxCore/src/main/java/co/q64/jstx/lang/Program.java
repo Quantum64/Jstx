@@ -8,18 +8,17 @@ import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 
 import co.q64.jstx.factory.IteratorFactoryFactory;
-import co.q64.jstx.factory.LiteralFactoryFactory;
-import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.opcode.Chars;
+import co.q64.jstx.runtime.Output;
 import lombok.Getter;
 
 @AutoFactory
 public class Program {
 	private StackFactory stackFactory;
 	private RegistersFactory registersFactory;
-	private LiteralFactory literal;
 	private IteratorFactory iteratorFactory;
 
+	private @Getter Output output;
 	private @Getter List<Instruction> instructions;
 	private @Getter Stack stack;
 	private @Getter Registers registers;
@@ -31,13 +30,13 @@ public class Program {
 	private @Getter boolean lastConditional = false; // TODO replace with stack?
 	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided LiteralFactoryFactory literal, @Provided IteratorFactoryFactory iteratorFactory, List<Instruction> instructions, String[] args) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, List<Instruction> instructions, String[] args, Output output) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
 		this.iteratorFactory = iteratorFactory.getFactory();
-		this.literal = literal.getFactory();
 		this.instructions = instructions;
 		this.args = args;
+		this.output = output;
 		instructions.add(0, new Instruction());
 	}
 
@@ -63,7 +62,7 @@ public class Program {
 			current.execute(stack);
 		}
 		if (printOnTerminate) {
-			System.out.println(stack.pop());
+			output.println(stack.pop().toString());
 		}
 	}
 
