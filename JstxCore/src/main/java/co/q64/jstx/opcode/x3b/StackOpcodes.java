@@ -60,6 +60,20 @@ public class StackOpcodes implements OpcodeRegistry {
 			stack.clr();
 			stack.push(value.toString());
 		});
+		op.reg("flatten soft", code(Chars.x12), stack -> {
+			if (stack.size() <= 0) {
+				return;
+			}
+			StringBuilder value = new StringBuilder();
+			for (int i = 0; i < stack.size(); i++) {
+				value.append(stack.peek(stack.size() - i));
+				if (i < stack.size() - 1) {
+					value.append(" ");
+				}
+			}
+			stack.clr();
+			stack.push(value.toString());
+		});
 		// @formatter:off
 	}
 

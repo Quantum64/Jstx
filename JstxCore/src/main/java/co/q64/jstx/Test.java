@@ -6,18 +6,7 @@ import java.util.List;
 public class Test {
 	public static final List<String> PROGRAM = Arrays.asList(
 			// @formatter:off
-			"load 1",
-			"load 10",
-			"list.range",
-			"iterate stack",
-			"load 11",
-			"list.range",
-			"iterate stack",
-			"println",
-			"end",
-			"end",
-			"string.format",
-			"terminate"
+			"load test"
 			// @formatter:on
 			);
 	
@@ -115,5 +104,5 @@ public class Test {
 	// @formatter:on
 	);
 
-	public static final String[] ARGS = { "aaab" };
+	public static final String[] ARGS = { "" };
 }

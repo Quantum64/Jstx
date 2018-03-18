@@ -1,13 +1,27 @@
 /** Add css rules here for your application. */
 
+body {background-color: #232323 !important;}
 
 /** Example rules used by the template application (remove for your app) */
 h1 {
   font-size: 2em;
   font-weight: bold;
   color: #777777;
-  margin: 40px 0px 70px;
+  margin: 20px 0px 20px;
   text-align: center;
+}
+
+.label {
+  margin: 5px 0px 5px;
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #777777;
+}
+
+.info {
+  font-size: 1em;
+  font-weight: bold;
+  color: #777777;
 }
 
 .sendButton {

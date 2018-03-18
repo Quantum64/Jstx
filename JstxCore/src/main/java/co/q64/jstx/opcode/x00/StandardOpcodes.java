@@ -20,7 +20,6 @@ public class StandardOpcodes implements OpcodeRegistry {
 
 	@Override
 	public void init(Opcodes op) {
-		op.reg("endif", Chars.xff, stack -> {});
 		op.reg("load 0", Chars.x00, stack -> stack.push(literal.create("0")));
 		op.reg("load 1", Chars.x01, stack -> stack.push(literal.create("1")));
 		op.reg("load 2", Chars.x02, stack -> stack.push(literal.create("2")));
@@ -31,7 +30,7 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("load 7", Chars.x07, stack -> stack.push(literal.create("7")));
 		op.reg("load 8", Chars.x08, stack -> stack.push(literal.create("8")));
 		op.reg("load 9", Chars.x09, stack -> stack.push(literal.create("9")));
-		op.reg("load null", Chars.x0a, stack -> stack.push(nul));
+		op.reg("endif", Chars.x0a, stack -> {});
 		op.reg("UNUSED literal begin", Chars.x0b, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal uncompressed", Chars.x0c, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal compression mode 1", Chars.x0d, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));

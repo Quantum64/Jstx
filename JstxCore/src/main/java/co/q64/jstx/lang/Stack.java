@@ -53,8 +53,9 @@ public class Stack {
 		Value result = nul;
 		for (int i = 0; i < depth; i++) {
 			if (stack.size() > 0) {
+				Value buffer = stack.remove(stack.size() - 1);
 				if (result == nul) {
-					result = stack.remove(stack.size() - 1);
+					result = buffer;
 				}
 			}
 		}

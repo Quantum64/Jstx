@@ -1,13 +1,17 @@
 package co.q64.jstx.lang;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 
 import co.q64.jstx.factory.IteratorFactoryFactory;
+import co.q64.jstx.factory.LiteralFactoryFactory;
+import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.opcode.Chars;
 import co.q64.jstx.runtime.Output;
 import lombok.Getter;
@@ -17,6 +21,7 @@ public class Program {
 	private StackFactory stackFactory;
 	private RegistersFactory registersFactory;
 	private IteratorFactory iteratorFactory;
+	private LiteralFactory literalFactory;
 
 	private @Getter Output output;
 	private @Getter List<Instruction> instructions;
@@ -30,11 +35,12 @@ public class Program {
 	private @Getter boolean lastConditional = false; // TODO replace with stack?
 	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, List<Instruction> instructions, String[] args, Output output) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, List<Instruction> instructions, String[] args, Output output) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
 		this.iteratorFactory = iteratorFactory.getFactory();
 		this.instructions = instructions;
+		this.literalFactory = literal.getFactory();
 		this.args = args;
 		this.output = output;
 		instructions.add(0, new Instruction());
@@ -47,9 +53,7 @@ public class Program {
 		this.terminated = false;
 		this.instruction = 0;
 		this.iterators.clear();
-		for (String s : args) {
-			stack.push(s);
-		}
+		stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
 		while (true) {
 			if (terminated) {
 				break;
@@ -152,11 +156,14 @@ public class Program {
 	}
 
 	public void warn(String message) {
-		System.out.println("Warning: " + message);
+		output.println("");
+		output.println("Warning: " + message);
 	}
 
 	public void crash(String message) {
-		System.err.println("Fatal: " + message);
+		output.println("");
+		output.println("Fatal: " + message);
+		output.println("The program cannot continue and will now terminate.");
 		terminateNoPrint();
 	}
 

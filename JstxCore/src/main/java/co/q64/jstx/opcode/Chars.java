@@ -297,4 +297,21 @@ public enum Chars {
 		}
 		return Chars.x00;
 	}
+
+	public static Chars fromByte(byte value) {
+		return fromInt(value + 128);
+	}
+
+	public static Chars fromInt(int value) {
+		for (Chars c : chars) {
+			if (c.getId() == value) {
+				return c;
+			}
+		}
+		return Chars.x00;
+	}
+	
+	public byte getByte() {
+		return (byte) (id - 128);
+	}
 }

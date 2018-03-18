@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.compiler.Compiler;
+import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.inject.OpcodeModule;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.ProgramFactory;
@@ -27,10 +28,13 @@ public class TestLexer {
 	}
 
 	private void start() {
-		String pr = compiler.compile(Test.PROGRAM);
-		System.out.println(pr);
-		List<Instruction> insns = cl.parse(pr);
-		insns.forEach(i -> System.out.println(i.getOpcode() == null ? "load value" : i.getOpcode().getName()));
+		CompilerOutput co = compiler.compile(Test.PROGRAM);
+		co.getDisplayOutput().forEach(s -> System.out.println(s));
+		if (!co.isSuccess()) {
+			return;
+		}
+		String pr = co.getProgram();
+		List<Instruction> insns = cl.parse(pr, so);
 		pf.create(insns, Test.ARGS, so).execute();
 	}
 
