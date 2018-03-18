@@ -19,8 +19,8 @@ import co.q64.jstx.runtime.ByteBuffer;
 import co.q64.jstx.runtime.Output;
 
 @Singleton
-public class CompiledLexer {
-	protected @Inject CompiledLexer() {}
+public class Lexer {
+	protected @Inject Lexer() {}
 
 	protected @Inject InstructionFactory instructionFactory;
 	protected @Inject LiteralFactory literalFactory;

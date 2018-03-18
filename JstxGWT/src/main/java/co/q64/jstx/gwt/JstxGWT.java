@@ -13,6 +13,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -60,13 +61,19 @@ public class JstxGWT implements EntryPoint {
 			main.setHeight("100%");
 			main.add(languageLabel);
 
-			VerticalPanel runCode = new VerticalPanel();
+			HorizontalPanel buttonsParent = new HorizontalPanel();
+			HorizontalPanel buttons = new HorizontalPanel();
 			Button runCodeButton = new Button();
 			runCodeButton.setText("Run Code");
-			runCode.setWidth("100%");
-			runCode.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			runCode.add(runCodeButton);
-			main.add(runCode);
+			Button switchToRunButton = new Button();
+			switchToRunButton.setText("Interpret Mode");
+			buttonsParent.setWidth("100%");
+			buttonsParent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			buttons.setSpacing(10);
+			buttons.add(runCodeButton);
+			buttons.add(switchToRunButton);
+			buttonsParent.add(buttons);
+			main.add(buttonsParent);
 
 			VerticalPanel code = new VerticalPanel();
 			code.setWidth("100%");
@@ -122,7 +129,7 @@ public class JstxGWT implements EntryPoint {
 
 			AceEditor outputEditor = new AceEditor();
 			outputEditor.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.5) + "px");
+			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.7) + "px");
 			output.add(outputEditor);
 			outputEditor.startEditor();
 			outputEditor.setReadOnly(true);
@@ -131,27 +138,9 @@ public class JstxGWT implements EntryPoint {
 
 			runCodeButton.addClickHandler(event -> {
 				outputEditor.setText("");
-				List<String> args = new ArrayList<>();
-				StringBuilder currentArg = new StringBuilder();
-				boolean inQuote = false;
-				for (char c : compilerEditor.getText().replace("\n", "").toCharArray()) {
-					if (String.valueOf(c).equals("\"")) {
-						inQuote = !inQuote;
-						continue;
-					}
-					if (String.valueOf(c).equals(" ") && !inQuote) {
-						args.add(currentArg.toString());
-						currentArg.setLength(0);
-						continue;
-					}
-					currentArg.append(c);
-				}
-				if (currentArg.length() > 0) {
-					args.add(currentArg.toString());
-				}
 				CompilerOutput co = jstx.compileProgram(Arrays.asList(codeEditor.getText().split("\n")));
 				if (co.isSuccess()) {
-					jstx.runProgram(co.getProgram(), args.toArray(new String[0]), new Output() {
+					jstx.runProgram(co.getProgram(), new String[0], new Output() {
 
 						@Override
 						public void println(String message) {
@@ -176,19 +165,29 @@ public class JstxGWT implements EntryPoint {
 				}
 				updateCompiler.run();
 			});
+
+			switchToRunButton.addClickHandler(event -> {
+				Window.Location.replace(Window.Location.createUrlBuilder().removeParameter("code").removeParameter("args").removeParameter("mode").buildString());
+			});
 		} else {
 			HTML languageLabel = new HTML("<h1>Jstx Online Interpreter (GWT)</h1>");
 			main.setWidth("100%");
 			main.setHeight("100%");
 			main.add(languageLabel);
 
-			VerticalPanel runCode = new VerticalPanel();
+			HorizontalPanel buttonsParent = new HorizontalPanel();
+			HorizontalPanel buttons = new HorizontalPanel();
 			Button runCodeButton = new Button();
 			runCodeButton.setText("Run Code");
-			runCode.setWidth("100%");
-			runCode.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-			runCode.add(runCodeButton);
-			main.add(runCode);
+			Button devModeButton = new Button();
+			devModeButton.setText("Dev Mode");
+			buttonsParent.setWidth("100%");
+			buttonsParent.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+			buttons.setSpacing(10);
+			buttons.add(runCodeButton);
+			buttons.add(devModeButton);
+			buttonsParent.add(buttons);
+			main.add(buttonsParent);
 
 			VerticalPanel code = new VerticalPanel();
 			code.setWidth("100%");
@@ -301,6 +300,10 @@ public class JstxGWT implements EntryPoint {
 				} catch (UnsupportedEncodingException e) {
 					logger.log(Level.SEVERE, "Failed to push arguments to URL!", e);
 				}
+			});
+
+			devModeButton.addClickHandler(event -> {
+				Window.Location.replace(Window.Location.createUrlBuilder().removeParameter("code").removeParameter("args").setParameter("mode", "dev").buildString());
 			});
 		}
 	}

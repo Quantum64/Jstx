@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 
 import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.inject.OpcodeModule;
-import co.q64.jstx.lexer.CompiledLexer;
+import co.q64.jstx.lexer.Lexer;
 import dagger.Component;
 
 @Singleton
@@ -12,7 +12,7 @@ import dagger.Component;
 public interface JstxComponent {
 	public Compiler getCompiler();
 
-	public CompiledLexer getLexer();
+	public Lexer getLexer();
 	
 	public Jstx getJstx();
 }

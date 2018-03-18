@@ -18,7 +18,7 @@ public class Instruction {
 	protected Instruction(Value value) {
 		this.value = value;
 	}
-
+	
 	protected Instruction() {}
 
 	public void execute(Stack stack) {

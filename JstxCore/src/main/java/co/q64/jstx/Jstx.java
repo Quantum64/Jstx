@@ -9,7 +9,7 @@ import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.lang.Program;
 import co.q64.jstx.lang.ProgramFactory;
-import co.q64.jstx.lexer.CompiledLexer;
+import co.q64.jstx.lexer.Lexer;
 import co.q64.jstx.runtime.Output;
 
 @Singleton
@@ -17,7 +17,7 @@ public class Jstx {
 	protected @Inject Jstx() {}
 
 	protected @Inject Compiler compiler;
-	protected @Inject CompiledLexer lexer;
+	protected @Inject Lexer lexer;
 	protected @Inject ProgramFactory programFactory;
 
 	public static void main(String[] args) {

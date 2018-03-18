@@ -10,7 +10,7 @@ import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.inject.OpcodeModule;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.ProgramFactory;
-import co.q64.jstx.lexer.CompiledLexer;
+import co.q64.jstx.lexer.Lexer;
 import co.q64.jstx.runtime.SystemOutput;
 import dagger.Component;
 
@@ -19,7 +19,7 @@ public class TestLexer {
 	protected @Inject TestLexer() {}
 
 	protected @Inject Compiler compiler;
-	protected @Inject CompiledLexer cl;
+	protected @Inject Lexer cl;
 	protected @Inject ProgramFactory pf;
 	protected @Inject SystemOutput so;
 

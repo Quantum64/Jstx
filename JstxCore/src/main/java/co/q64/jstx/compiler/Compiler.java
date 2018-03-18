@@ -27,6 +27,9 @@ public class Compiler {
 		StringBuilder result = new StringBuilder();
 		instruction: for (String ins : instructions) {
 			index++;
+			if (ins.isEmpty()) {
+				continue;
+			}
 			// Add debug information to output from last round
 			if (index > 0) {
 				compiledInsns.add(result.toString().substring(characters));
