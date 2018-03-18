@@ -122,27 +122,9 @@ public class JstxGWT implements EntryPoint {
 
 			runCodeButton.addClickHandler(event -> {
 				outputEditor.setText("");
-				List<String> args = new ArrayList<>();
-				StringBuilder currentArg = new StringBuilder();
-				boolean inQuote = false;
-				for (char c : compilerEditor.getText().replace("\n", "").toCharArray()) {
-					if (String.valueOf(c).equals("\"")) {
-						inQuote = !inQuote;
-						continue;
-					}
-					if (String.valueOf(c).equals(" ") && !inQuote) {
-						args.add(currentArg.toString());
-						currentArg.setLength(0);
-						continue;
-					}
-					currentArg.append(c);
-				}
-				if (currentArg.length() > 0) {
-					args.add(currentArg.toString());
-				}
 				CompilerOutput co = jstx.compileProgram(Arrays.asList(codeEditor.getText().split("\n")));
 				if (co.isSuccess()) {
-					jstx.runProgram(co.getProgram(), args.toArray(new String[0]), new Output() {
+					jstx.runProgram(co.getProgram(), new String[0], new Output() {
 
 						@Override
 						public void println(String message) {
