@@ -21,7 +21,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import co.q64.jstx.DaggerJstxComponent;
 import co.q64.jstx.Jstx;
 import co.q64.jstx.JstxComponent;
-import co.q64.jstx.Test;
 import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.gwt.ace.AceEditor;
 import co.q64.jstx.gwt.ace.AceEditorTheme;
@@ -33,23 +32,8 @@ public class JstxGWT implements EntryPoint {
 
 	public void onModuleLoad() {
 		Logger logger = Logger.getLogger("Jstx");
-		logger.log(Level.SEVERE, "Hello world!");
 		JstxComponent component = DaggerJstxComponent.builder().build();
 		Jstx jstx = component.getJstx();
-		CompilerOutput program = jstx.compileProgram(Test.PROGRAM);
-		logger.log(Level.INFO, program.getDisplayOutput().stream().collect(Collectors.joining("\n")));
-		jstx.runProgram(program.getProgram(), new String[0], new Output() {
-
-			@Override
-			public void println(String message) {
-				logger.log(Level.INFO, message);
-			}
-
-			@Override
-			public void print(String message) {
-				logger.log(Level.INFO, message);
-			}
-		});
 		String modeParam = Window.Location.getParameter("mode");
 		boolean dev = modeParam != null && modeParam.equals("dev");
 		Panel root = RootPanel.get();
@@ -138,9 +122,27 @@ public class JstxGWT implements EntryPoint {
 
 			runCodeButton.addClickHandler(event -> {
 				outputEditor.setText("");
+				List<String> args = new ArrayList<>();
+				StringBuilder currentArg = new StringBuilder();
+				boolean inQuote = false;
+				for (char c : compilerEditor.getText().replace("\n", "").toCharArray()) {
+					if (String.valueOf(c).equals("\"")) {
+						inQuote = !inQuote;
+						continue;
+					}
+					if (String.valueOf(c).equals(" ") && !inQuote) {
+						args.add(currentArg.toString());
+						currentArg.setLength(0);
+						continue;
+					}
+					currentArg.append(c);
+				}
+				if (currentArg.length() > 0) {
+					args.add(currentArg.toString());
+				}
 				CompilerOutput co = jstx.compileProgram(Arrays.asList(codeEditor.getText().split("\n")));
 				if (co.isSuccess()) {
-					jstx.runProgram(co.getProgram(), new String[0], new Output() {
+					jstx.runProgram(co.getProgram(), args.toArray(new String[0]), new Output() {
 
 						@Override
 						public void println(String message) {
