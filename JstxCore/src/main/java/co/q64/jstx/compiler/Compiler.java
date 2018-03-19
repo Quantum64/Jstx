@@ -89,10 +89,10 @@ public class Compiler {
 						}
 					}
 					if (valid) {
-						load = load.toLowerCase();
+						String lower = load.toLowerCase();
 						if (smaz.canCompress(load)) {
-							byte[] compressed = smaz.compress(load);
-							if (compressed.length < load.length() && compressed.length <= 256 && compressed.length > 0) {
+							byte[] compressed = smaz.compress(lower);
+							if (compressed.length < lower.length() && compressed.length <= 256 && compressed.length > 0) {
 								result.append(Chars.literalCompressionMode3.getCharacter());
 								result.append(Chars.fromInt(compressed.length - 1).getCharacter());
 								for (byte b : compressed) {
