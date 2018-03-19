@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import co.q64.jstx.runtime.CharBuffer;
+import co.q64.jstx.runtime.common.CharBuffer;
 
 @Singleton
 public class Smaz {

@@ -1,7 +1,9 @@
-package co.q64.jstx.runtime;
+package co.q64.jstx.runtime.system;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import co.q64.jstx.runtime.Output;
 
 @Singleton
 public class SystemOutput implements Output {

@@ -40,16 +40,19 @@ public class CompilerOutput {
 			result.add("Instructions: " + instructionLines.size());
 			result.add(new String());
 			for (int i = 0; i < compiledLines.size(); i++) {
+				if (instructionLines.size() <= i) {
+					continue;
+				}
 				String instruction = instructionLines.get(i);
 				String offset = new String();
 				for (int u = 0; u < offsetLength - instruction.length(); u++) {
 					offset += " ";
 				}
 				String compiled = compiledLines.get(i);
-				if(compiled.equals(" ")) {
+				if (compiled.equals(" ")) {
 					compiled = "<whitespace character>";
 				}
-				result.add(instruction + offset + " => " + compiled);
+				result.add((i + 1) + ": " + instruction + offset + " => " + compiled);
 			}
 		} else {
 			result.add(error);

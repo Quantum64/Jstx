@@ -1,7 +1,4 @@
-package co.q64.jstx.opcode;
-
-import java.util.Arrays;
-import java.util.List;
+package co.q64.jstx.lang.opcode;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -272,22 +269,6 @@ public enum Chars {
 	private String character;
 
 	private static final Chars[] chars = Chars.values();
-	public static final Chars literalBegin = x0b;
-	public static final Chars literalUncompressed = x0c;
-	public static final Chars literalCompressionMode1 = x0d;
-	public static final Chars literalCompressionMode2 = x0e;
-	public static final Chars literalCompressionMode3 = x0f;
-	public static final Chars conditionalEnd = xff;
-	public static final Chars literalPair = x10;
-	public static final Chars literalSingle = x11;
-	public static final Chars ifEqual = x12;
-	public static final Chars ifNotEqual = x13;
-	public static final Chars ifGreater = x14;
-	public static final Chars ifGreaterOrEqual = x15;
-	public static final Chars ifLess = x16;
-	public static final Chars ifLessOrEqual = x17;
-	public static final Chars ifElse = x18;
-	public static final List<Chars> conditional = Arrays.asList(Chars.ifEqual, Chars.ifNotEqual, Chars.ifGreater, Chars.ifGreaterOrEqual, Chars.ifLess, Chars.ifLessOrEqual, Chars.ifElse);
 
 	public static Chars fromCode(String code) {
 		for (Chars c : chars) {

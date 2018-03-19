@@ -7,11 +7,11 @@ import javax.inject.Singleton;
 
 import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.compiler.CompilerOutput;
-import co.q64.jstx.inject.OpcodeModule;
+import co.q64.jstx.inject.StandardModule;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.ProgramFactory;
 import co.q64.jstx.lexer.Lexer;
-import co.q64.jstx.runtime.SystemOutput;
+import co.q64.jstx.runtime.system.SystemOutput;
 import dagger.Component;
 
 @Singleton
@@ -39,7 +39,7 @@ public class TestLexer {
 	}
 
 	@Singleton
-	@Component(modules = OpcodeModule.class)
+	@Component(modules = StandardModule.class)
 	protected static interface TestComponent {
 		public TestLexer getLexer();
 	}

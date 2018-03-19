@@ -2,15 +2,16 @@ package co.q64.jstx.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.compression.Base;
 import co.q64.jstx.compression.Smaz;
-import co.q64.jstx.opcode.Chars;
-import co.q64.jstx.opcode.Opcode;
-import co.q64.jstx.opcode.Opcodes;
+import co.q64.jstx.lang.opcode.Chars;
+import co.q64.jstx.lang.opcode.OpcodeMarker;
+import co.q64.jstx.lang.opcode.Opcodes;
 
 @Singleton
 public class Compiler {
@@ -21,11 +22,29 @@ public class Compiler {
 	protected @Inject Base base;
 	protected @Inject CompilerOutputFactory output;
 
-	public CompilerOutput compile(List<String> instructions) {
+	public CompilerOutput compile(List<String> input) {
+		List<String> instructions = new ArrayList<>();
+		for (String current : input) {
+			if (current.startsWith("load")) {
+				instructions.add(current);
+				continue;
+			}
+			StringBuilder updated = new StringBuilder();
+			for (char c : current.toCharArray()) {
+				if (String.valueOf(c).equals("'") || String.valueOf(c).equals("#") || String.valueOf(c).equals("/")) {
+					break;
+				}
+				updated.append(c);
+			}
+			current = updated.toString().trim();
+			if (!current.isEmpty()) {
+				instructions.add(current);
+			}
+		}
 		int index = -1, characters = 0;
 		List<String> compiledInsns = new ArrayList<>();
 		StringBuilder result = new StringBuilder();
-		instruction: for (String ins : instructions) {
+		for (String ins : instructions) {
 			index++;
 			if (ins.isEmpty()) {
 				continue;
@@ -36,13 +55,15 @@ public class Compiler {
 			}
 			characters = +result.length();
 
-			for (Opcode op : opcodes.all()) {
-				if (op.getName().equals(ins)) {
-					for (Chars c : op.getChars()) {
-						result.append(c.getCharacter());
+			Optional<List<Chars>> opt = opcodes.lookupName(ins);
+			if (opt.isPresent()) {
+				for (Chars c : opt.get()) {
+					if (c == null) {
+						continue;
 					}
-					continue instruction;
+					result.append(c.getCharacter());
 				}
+				continue;
 			}
 			if (ins.startsWith("load ")) {
 				String load = ins.substring(5);
@@ -50,19 +71,19 @@ public class Compiler {
 					return output.create("Attempted to load a 0 length literal (probably an empty load instruction). Line: " + (index + 1));
 				}
 				if (load.length() == 1) {
-					result.append(Chars.literalSingle.getCharacter());
+					result.append(opcodes.getChars(OpcodeMarker.LITERAL2).getCharacter());
 					result.append(load);
 					continue;
 				}
 				if (load.length() == 2) {
-					result.append(Chars.literalPair.getCharacter());
+					result.append(opcodes.getChars(OpcodeMarker.LITERAL2).getCharacter());
 					result.append(load);
 					continue;
 				}
 				if (base.canCompress(load)) {
 					byte[] compressed = base.compress(load);
 					if (compressed.length < load.length() && compressed.length <= 256 && compressed.length > 0) {
-						result.append(Chars.literalCompressionMode1.getCharacter());
+						result.append(opcodes.getChars(OpcodeMarker.COMPRESSION1).getCharacter());
 						result.append(Chars.fromInt(compressed.length - 1).getCharacter());
 						for (byte b : compressed) {
 							result.append(Chars.fromByte(b).getCharacter());
@@ -93,7 +114,7 @@ public class Compiler {
 						if (smaz.canCompress(load)) {
 							byte[] compressed = smaz.compress(lower);
 							if (compressed.length < lower.length() && compressed.length <= 256 && compressed.length > 0) {
-								result.append(Chars.literalCompressionMode3.getCharacter());
+								result.append(opcodes.getChars(OpcodeMarker.COMPRESSION3).getCharacter());
 								result.append(Chars.fromInt(compressed.length - 1).getCharacter());
 								for (byte b : compressed) {
 									result.append(Chars.fromByte(b).getCharacter());
@@ -106,7 +127,7 @@ public class Compiler {
 				if (smaz.canCompress(load)) {
 					byte[] compressed = smaz.compress(load);
 					if (compressed.length < load.length() && compressed.length <= 256 && compressed.length > 0) {
-						result.append(Chars.literalCompressionMode2.getCharacter());
+						result.append(opcodes.getChars(OpcodeMarker.COMPRESSION2).getCharacter());
 						result.append(Chars.fromInt(compressed.length - 1).getCharacter());
 						for (byte b : compressed) {
 							result.append(Chars.fromByte(b).getCharacter());
@@ -116,10 +137,10 @@ public class Compiler {
 				}
 				if (load.length() > 2) {
 					if (index > 0) {
-						result.append(Chars.literalBegin.getCharacter());
+						result.append(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter());
 					}
 					result.append(load);
-					result.append(Chars.literalUncompressed.getCharacter());
+					result.append(opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter());
 					continue;
 				}
 			}

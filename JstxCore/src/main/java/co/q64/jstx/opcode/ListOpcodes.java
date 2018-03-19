@@ -1,6 +1,5 @@
-package co.q64.jstx.opcode.x3a;
+package co.q64.jstx.opcode;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,36 +8,33 @@ import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import co.q64.jstx.lang.opcode.OpcodeRegistry;
+import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
-import co.q64.jstx.opcode.Chars;
-import co.q64.jstx.opcode.OpcodeFactory;
-import co.q64.jstx.opcode.OpcodeRegistry;
-import co.q64.jstx.opcode.Opcodes;
 import lombok.val;
 
 @Singleton
 public class ListOpcodes implements OpcodeRegistry {
 	protected @Inject ListOpcodes() {}
 
-	protected @Inject OpcodeFactory of;
 	protected @Inject Null nul;
 
 	@Override
-	public void init(Opcodes op) {
-		op.reg("list.explode", code(Chars.x00), stack -> stack.pop().iterate().forEach(x -> stack.push(x)));
-		op.reg("list.reverse", code(Chars.x01), stack -> {
+	public void register(Opcodes op) {
+		op.reg("list.explode",  stack -> stack.pop().iterate().forEach(x -> stack.push(x)));
+		op.reg("list.reverse",  stack -> {
 			val vals = stack.pop().iterate();
 			Collections.reverse(vals);
 			stack.push(vals.stream().map(Object::toString).collect(Collectors.joining(",")));
 		});
-		op.reg("list.range", code(Chars.x02), stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.joining(","))));
-		op.reg("list.reverseRange", code(Chars.x03), stack -> {
+		op.reg("list.range",  stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.joining(","))));
+		op.reg("list.reverseRange",  stack -> {
 			int to = stack.pop().asInt();
 			int from = stack.pop().asInt();
 			stack.push(IntStream.rangeClosed(from, to).map(i -> to - i + from - 1).boxed().map(Object::toString).collect(Collectors.joining(",")));
 		});
-		op.reg("list.set", code(Chars.x04), stack -> {
+		op.reg("list.set",  stack -> {
 			int index = stack.pop().asInt();
 			Value target = stack.pop();
 			List<Value> list = stack.pop().iterate();
@@ -53,7 +49,7 @@ public class ListOpcodes implements OpcodeRegistry {
 			}
 			stack.push(list);
 		});
-		op.reg("list.get", code(Chars.x05), stack -> {
+		op.reg("list.get",  stack -> {
 			int index = stack.pop().asInt();
 			List<Value> list = stack.pop().iterate();
 			if (index >= list.size()) {
@@ -62,9 +58,5 @@ public class ListOpcodes implements OpcodeRegistry {
 			}
 			stack.push(list.get(index));
 		});
-	}
-
-	private List<Chars> code(Chars code) {
-		return Arrays.asList(Chars.x3a, code);
 	}
 }

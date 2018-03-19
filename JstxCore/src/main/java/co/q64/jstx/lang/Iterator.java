@@ -17,8 +17,8 @@ public class Iterator {
 	private LiteralFactory literal;
 	private Program program;
 	private boolean onStack;
-	private int line;
-	private int index;
+	private int line, index;
+	private Value o, i;
 
 	protected Iterator(@Provided LiteralFactoryFactory literal, Program program, int instruction, boolean onStack) {
 		this.registers = program.getRegisters();
@@ -32,8 +32,9 @@ public class Iterator {
 
 	public boolean next() {
 		if (values.size() > 0) {
-			registers.setI(literal.create(index));
-			registers.setO(values.poll());
+			i = literal.create(index);
+			o = values.poll();
+			register();
 			if (onStack) {
 				program.getStack().push(registers.getO());
 			}
@@ -42,5 +43,10 @@ public class Iterator {
 			return false;
 		}
 		return true;
+	}
+
+	public void register() {
+		registers.setI(i);
+		registers.setO(o);
 	}
 }

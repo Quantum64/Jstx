@@ -1,4 +1,4 @@
-package co.q64.jstx.runtime;
+package co.q64.jstx.runtime.common;
 
 public class CharBuffer {
 	private char[] internal;

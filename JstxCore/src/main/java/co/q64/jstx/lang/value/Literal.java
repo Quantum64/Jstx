@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
 
-import co.q64.jstx.inject.types.CompareType;
-import co.q64.jstx.inject.types.OperateType;
+import co.q64.jstx.types.CompareType;
+import co.q64.jstx.types.OperateType;
 
 @AutoFactory
 public class Literal implements Value {

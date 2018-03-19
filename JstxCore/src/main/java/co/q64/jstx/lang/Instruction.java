@@ -1,24 +1,29 @@
 package co.q64.jstx.lang;
 
-import com.google.auto.factory.AutoFactory;
+import java.util.function.Consumer;
 
+import com.google.auto.factory.AutoFactory;
+import com.google.auto.factory.Provided;
+
+import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.Value;
-import co.q64.jstx.opcode.Opcode;
 import lombok.Getter;
 
 @AutoFactory
 public class Instruction {
-	private @Getter Opcode opcode;
+	private @Getter Integer opcode;
+	private Consumer<Stack> executor;
 	private Value value;
 
-	protected Instruction(Opcode opcode) {
+	protected Instruction(@Provided Opcodes opcodes, int opcode) {
 		this.opcode = opcode;
+		this.executor = opcodes.getExecutor(opcode);
 	}
 
 	protected Instruction(Value value) {
 		this.value = value;
 	}
-	
+
 	protected Instruction() {}
 
 	public void execute(Stack stack) {
@@ -26,9 +31,8 @@ public class Instruction {
 			stack.push(value);
 			return;
 		}
-		if (opcode != null) {
-			opcode.getExecutor()
-			.accept(stack);
+		if (executor != null) {
+			executor.accept(stack);
 		}
 		// no-op
 	}

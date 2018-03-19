@@ -6,20 +6,7 @@ import java.util.List;
 public class Test {
 	public static final List<String> PROGRAM = Arrays.asList(
 			// @formatter:off
-			"load 1",
-			"sdr a",
-			"ldr a",
-			"println",
-			"ldr a",
-			"load 1",
-			"+",
-			"sdr a",
-			"ldr a",
-			"load 10",
-			"if <=",
-			"load 2",
-			"jump",
-			"endif"
+			""
 			// @formatter:on
 			);
 	
