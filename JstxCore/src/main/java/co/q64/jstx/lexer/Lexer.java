@@ -1,8 +1,8 @@
 package co.q64.jstx.lexer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -11,12 +11,12 @@ import co.q64.jstx.compression.Base;
 import co.q64.jstx.compression.Smaz;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.InstructionFactory;
+import co.q64.jstx.lang.opcode.Chars;
+import co.q64.jstx.lang.opcode.OpcodeMarker;
+import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.LiteralFactory;
-import co.q64.jstx.opcode.Chars;
-import co.q64.jstx.opcode.Opcode;
-import co.q64.jstx.opcode.Opcodes;
-import co.q64.jstx.runtime.ByteBuffer;
 import co.q64.jstx.runtime.Output;
+import co.q64.jstx.runtime.common.ByteBuffer;
 
 @Singleton
 public class Lexer {
@@ -31,11 +31,11 @@ public class Lexer {
 	public List<Instruction> parse(String program, Output output) {
 		// Check for implied literal
 		for (char c : program.toCharArray()) {
-			if (String.valueOf(c).equals(Chars.literalBegin.getCharacter())) {
+			if (String.valueOf(c).equals(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter())) {
 				break;
 			}
-			if (Arrays.asList(Chars.literalUncompressed.getCharacter()).contains(String.valueOf(c))) {
-				program = Chars.literalBegin.getCharacter() + program;
+			if (String.valueOf(c).equals(opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter())) {
+				program = opcodes.getChars(OpcodeMarker.LITERAL).getCharacter() + program;
 			}
 		}
 		boolean readingLiteral = false, smazSpecial = false;
@@ -85,7 +85,7 @@ public class Lexer {
 					}
 					continue;
 				}
-				if (readingLiteral && Chars.literalUncompressed.getCharacter().equals(c)) {
+				if (readingLiteral && opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter().equals(c)) {
 					readingLiteral = false;
 					instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
 					continue;
@@ -94,55 +94,38 @@ public class Lexer {
 					currentLiteral.append(c);
 					continue;
 				}
-				if (Chars.literalCompressionMode1.getCharacter().equals(c)) {
+				if (opcodes.getChars(OpcodeMarker.COMPRESSION1).getCharacter().equals(c)) {
 					index++;
 					baseToRead = Chars.fromCode(String.valueOf(chars[index])).getId() + 1;
 					currentBuffer = new ByteBuffer(baseToRead);
 					continue;
 				}
-				if (Chars.literalCompressionMode2.getCharacter().equals(c) || Chars.literalCompressionMode3.getCharacter().equals(c)) {
+				if (opcodes.getChars(OpcodeMarker.COMPRESSION2).getCharacter().equals(c) || opcodes.getChars(OpcodeMarker.COMPRESSION3).getCharacter().equals(c)) {
 					index++;
 					smazToRead = Chars.fromCode(String.valueOf(chars[index])).getId() + 1;
 					currentBuffer = new ByteBuffer(smazToRead);
-					smazSpecial = Chars.literalCompressionMode3.getCharacter().equals(c);
+					smazSpecial = opcodes.getChars(OpcodeMarker.COMPRESSION3).getCharacter().equals(c);
 					continue;
 				}
-				if (Chars.literalBegin.getCharacter().equals(c)) {
+				if (opcodes.getChars(OpcodeMarker.LITERAL).getCharacter().equals(c)) {
 					readingLiteral = true;
 					currentLiteral = new StringBuilder();
 					continue;
 				}
 
-				if (Chars.literalPair.getCharacter().equals(c)) {
+				if (opcodes.getChars(OpcodeMarker.LITERAL2).getCharacter().equals(c)) {
 					currentLiteral = new StringBuilder();
 					shortToRead = 2;
 					continue;
 				}
-				if (Chars.literalSingle.getCharacter().equals(c)) {
+				if (opcodes.getChars(OpcodeMarker.LITERAL1).getCharacter().equals(c)) {
 					currentLiteral = new StringBuilder();
 					shortToRead = 1;
 					continue;
 				}
 			}
-			String op = opcodeQueue + c;
-			Opcode oc = null;
-			for (Opcode opcode : opcodes.all()) {
-				if (op.length() == opcode.getChars().size()) {
-					boolean match = true;
-					int i = 0;
-					for (Chars ch : opcode.getChars()) {
-						if (!ch.getCharacter().equals(String.valueOf(op.charAt(i)))) {
-							match = false;
-							break;
-						}
-						i++;
-					}
-					if (match == true) {
-						oc = opcode;
-					}
-				}
-			}
-			if (oc == null) {
+			Optional<Integer> oc = opcodes.lookupSymbol(opcodeQueue + c);
+			if (!oc.isPresent()) {
 				opcodeQueue += c;
 				if (opcodeQueue.length() > 3) {
 					output.println("Lexer Warning: Unusual opcode '" + opcodeQueue + "'. There is likely a syntax error in your program.");
@@ -150,7 +133,7 @@ public class Lexer {
 				continue;
 			}
 			opcodeQueue = "";
-			Instruction instruction = instructionFactory.create(oc);
+			Instruction instruction = instructionFactory.create(oc.get());
 			instructions.add(instruction);
 		}
 		return instructions;

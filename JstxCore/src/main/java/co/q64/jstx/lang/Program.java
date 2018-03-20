@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
@@ -11,8 +12,9 @@ import com.google.auto.factory.Provided;
 
 import co.q64.jstx.factory.IteratorFactoryFactory;
 import co.q64.jstx.factory.LiteralFactoryFactory;
+import co.q64.jstx.lang.opcode.OpcodeMarker;
+import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.LiteralFactory;
-import co.q64.jstx.opcode.Chars;
 import co.q64.jstx.runtime.Output;
 import lombok.Getter;
 
@@ -22,6 +24,7 @@ public class Program {
 	private RegistersFactory registersFactory;
 	private IteratorFactory iteratorFactory;
 	private LiteralFactory literalFactory;
+	private Opcodes opcodes;
 
 	private @Getter Output output;
 	private @Getter List<Instruction> instructions;
@@ -29,18 +32,19 @@ public class Program {
 	private @Getter Registers registers;
 
 	private @Getter int instruction;
-	private boolean printOnTerminate;
-	private boolean terminated;
+	private boolean printOnTerminate, terminated;
 	private Deque<Iterator> iterators = new ArrayDeque<>();
 	private @Getter boolean lastConditional = false; // TODO replace with stack?
+	private long start;
 	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, List<Instruction> instructions, String[] args, Output output) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, @Provided Opcodes opcodes, List<Instruction> instructions, String[] args, Output output) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
 		this.iteratorFactory = iteratorFactory.getFactory();
 		this.instructions = instructions;
 		this.literalFactory = literal.getFactory();
+		this.opcodes = opcodes;
 		this.args = args;
 		this.output = output;
 		instructions.add(0, new Instruction());
@@ -52,6 +56,7 @@ public class Program {
 		this.printOnTerminate = true;
 		this.terminated = false;
 		this.instruction = 0;
+		this.start = System.currentTimeMillis();
 		this.iterators.clear();
 		stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
 		while (true) {
@@ -60,6 +65,10 @@ public class Program {
 			}
 			if (instructions.size() <= instruction) {
 				break;
+			}
+			if (System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(2) > start) {
+				crash("Unusually long execution time! (2000ms)");
+				continue;
 			}
 			Instruction current = instructions.get(instruction);
 			instruction++;
@@ -85,6 +94,9 @@ public class Program {
 		if (iterators.size() > 0) {
 			if (iterators.peek().next()) {
 				iterators.poll();
+				if (iterators.size() > 0) {
+					iterators.peek().register();
+				}
 			}
 		}
 	}
@@ -125,10 +137,10 @@ public class Program {
 			if (ins.getOpcode() == null) {
 				continue;
 			}
-			if (Chars.conditional.contains(ins.getOpcode().getChars().get(0))) {
+			if (opcodes.getFlags(OpcodeMarker.CONDITIONAL).contains(ins.getOpcode()) || (ins.getOpcode().equals(opcodes.getFlag(OpcodeMarker.ELSE)))) {
 				debt++;
 			}
-			if (ins.getOpcode().getChars().size() == 1 && (ins.getOpcode().getChars().get(0) == Chars.ifElse || ins.getOpcode().getChars().get(0) == Chars.conditionalEnd)) {
+			if (ins.getOpcode().equals(opcodes.getFlag(OpcodeMarker.ELSE)) || ins.getOpcode().equals(opcodes.getFlag(OpcodeMarker.ENDIF))) {
 				if (debt <= 0) {
 					instruction = i;
 					return;
@@ -148,7 +160,7 @@ public class Program {
 			if (ins.getOpcode() == null) {
 				continue;
 			}
-			if (ins.getOpcode().getChars().size() == 1 && ins.getOpcode().getChars().get(0) == Chars.x2c /* end opcode */) {
+			if (ins.getOpcode().equals(opcodes.getFlag(OpcodeMarker.END))) {
 				instruction = i + 1; // Don't actually run the end instruction
 				return;
 			}

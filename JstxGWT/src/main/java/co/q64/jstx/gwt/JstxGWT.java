@@ -36,14 +36,17 @@ public class JstxGWT implements EntryPoint {
 		Jstx jstx = component.getJstx();
 		String modeParam = Window.Location.getParameter("mode");
 		boolean dev = modeParam != null && modeParam.equals("dev");
+
 		Panel root = RootPanel.get();
 		VerticalPanel main = new VerticalPanel();
 		root.add(main);
 		if (dev) {
 			HTML languageLabel = new HTML("<h1>Jstx Online Compiler (GWT)</h1>");
+			HTML versionLabel = new HTML("<span class=\"label\">Version 1.0</span>");
 			main.setWidth("100%");
 			main.setHeight("100%");
 			main.add(languageLabel);
+			main.add(versionLabel);
 
 			HorizontalPanel buttonsParent = new HorizontalPanel();
 			HorizontalPanel buttons = new HorizontalPanel();

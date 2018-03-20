@@ -183,7 +183,6 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.16.16</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -204,39 +203,32 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.q64.jstx</groupId>
 			<artifactId>JstxCore</artifactId>
-			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>co.q64.jstx</groupId>
 			<artifactId>JstxCore</artifactId>
-			<version>1.0</version>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger</artifactId>
-			<version>2.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
-			<version>1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger-gwt</artifactId>
-			<version>2.14.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.auto.factory</groupId>
 			<artifactId>auto-factory</artifactId>
-			<version>1.0-beta5</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>

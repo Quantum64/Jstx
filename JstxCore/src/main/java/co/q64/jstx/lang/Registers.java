@@ -1,5 +1,9 @@
 package co.q64.jstx.lang;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.google.auto.factory.AutoFactory;
 import com.google.auto.factory.Provided;
 
@@ -12,6 +16,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Registers {
+	private Map<Value, Value> global = new HashMap<Value, Value>();
+	private Value[] longRegister = new Value[256];
 	private Value a, b, c, d, i, o;
 
 	protected Registers(@Provided Null nul) {
@@ -21,5 +27,6 @@ public class Registers {
 		this.d = nul;
 		this.i = nul;
 		this.o = nul;
+		Arrays.fill(longRegister, nul);
 	}
 }

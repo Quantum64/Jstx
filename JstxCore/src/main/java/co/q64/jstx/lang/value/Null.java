@@ -6,8 +6,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import co.q64.jstx.inject.types.CompareType;
-import co.q64.jstx.inject.types.OperateType;
+import co.q64.jstx.types.CompareType;
+import co.q64.jstx.types.OperateType;
 
 @Singleton
 public class Null implements Value {

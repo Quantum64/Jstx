@@ -2,8 +2,8 @@ package co.q64.jstx.lang.value;
 
 import java.util.List;
 
-import co.q64.jstx.inject.types.CompareType;
-import co.q64.jstx.inject.types.OperateType;
+import co.q64.jstx.types.CompareType;
+import co.q64.jstx.types.OperateType;
 
 public interface Value {
 	public boolean compare(Value value, CompareType type);

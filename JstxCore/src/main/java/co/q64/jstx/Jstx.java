@@ -22,7 +22,7 @@ public class Jstx {
 
 	public static void main(String[] args) {
 		JstxComponent component = DaggerJstxComponent.create();
-
+		
 	}
 
 	public CompilerOutput compileProgram(List<String> lines) {
