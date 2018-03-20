@@ -8,8 +8,10 @@ import com.google.auto.factory.AutoFactory;
 
 import co.q64.jstx.types.CompareType;
 import co.q64.jstx.types.OperateType;
+import lombok.EqualsAndHashCode;
 
 @AutoFactory
+@EqualsAndHashCode
 public class Literal implements Value {
 	private String literal;
 

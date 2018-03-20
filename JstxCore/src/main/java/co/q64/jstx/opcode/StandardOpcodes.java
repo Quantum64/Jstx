@@ -68,6 +68,8 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("swp", stack -> stack.swap());
 		op.reg("load true", stack -> stack.push("true"));
 		op.reg("load false", stack -> stack.push("false"));
+		op.reg("ldv", stack -> stack.push(stack.getProgram().getRegisters().getGlobal().get(stack.pop())));
+		op.reg("sdv", stack -> stack.getProgram().getRegisters().getGlobal().put(stack.pop(), stack.pop()));
 		op.reg("ldr a", stack -> stack.push(stack.getProgram().getRegisters().getA()));
 		op.reg("ldr b", stack -> stack.push(stack.getProgram().getRegisters().getB()));
 		op.reg("ldr c", stack -> stack.push(stack.getProgram().getRegisters().getC()));
