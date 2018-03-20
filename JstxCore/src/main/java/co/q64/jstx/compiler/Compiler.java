@@ -71,7 +71,7 @@ public class Compiler {
 					return output.create("Attempted to load a 0 length literal (probably an empty load instruction). Line: " + (index + 1));
 				}
 				if (load.length() == 1) {
-					result.append(opcodes.getChars(OpcodeMarker.LITERAL2).getCharacter());
+					result.append(opcodes.getChars(OpcodeMarker.LITERAL1).getCharacter());
 					result.append(load);
 					continue;
 				}
