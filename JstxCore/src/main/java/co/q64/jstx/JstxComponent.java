@@ -13,6 +13,6 @@ public interface JstxComponent {
 	public Compiler getCompiler();
 
 	public Lexer getLexer();
-	
+
 	public Jstx getJstx();
 }

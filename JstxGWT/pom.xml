@@ -13,6 +13,9 @@
 	<name>co.q64.jstx.gwt.JstxGWT</name>
 
 	<build>
+		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" 
+			update them in DevMode -->
+		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -69,21 +72,28 @@
 					<moduleName>co.q64.jstx.gwt.JstxGWT</moduleName>
 					<moduleShortName>JstxGWT</moduleShortName>
 					<failOnError>true</failOnError>
+					<!-- GWT compiler 2.8 requires 1.8, hence define sourceLevel here if 
+						you use a different source language for java compilation -->
 					<sourceLevel>1.8</sourceLevel>
+					<!-- Compiler configuration -->
 					<compilerArgs>
+						<!-- Ask GWT to create the Story of Your Compile (SOYC) (gwt:compile) -->
 						<arg>-compileReport</arg>
 						<arg>-XcompilerMetrics</arg>
 					</compilerArgs>
 					<jvmArgs>
 						<args>-javaagent:${lombok.lib}=ECJ</args>
 					</jvmArgs>
+					<!-- DevMode configuration -->
 					<warDir>${project.build.directory}/${project.build.finalName}</warDir>
 					<classpathScope>compile+runtime</classpathScope>
+					<!-- URL(s) that should be opened by DevMode (gwt:devmode). -->
 					<startupUrls>
 						<startupUrl>JstxGWT.html</startupUrl>
 					</startupUrls>
 				</configuration>
 			</plugin>
+			<!-- Skip normal test execution, we use gwt:test instead -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.17</version>
@@ -142,8 +152,14 @@
 	</build>
 
 	<properties>
+
+		<!-- Setting maven.compiler.source to something different to 1.8 needs 
+			that you configure the sourceLevel in gwt-maven-plugin since GWT compiler 
+			2.8 requires 1.8 (see gwt-maven-plugin block below) -->
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+
+		<!-- Don't let your Mac use a crazy non-standard encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -152,6 +168,7 @@
 
 	<dependencyManagement>
 		<dependencies>
+			<!-- ensure all GWT deps use the same version (unless overridden) -->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt</artifactId>
@@ -191,28 +208,23 @@
 		<dependency>
 			<groupId>co.q64.jstx</groupId>
 			<artifactId>JstxCore</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>co.q64.jstx</groupId>
 			<artifactId>JstxCore</artifactId>
 			<classifier>sources</classifier>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.inject</groupId>
 			<artifactId>javax.inject</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.dagger</groupId>
 			<artifactId>dagger-gwt</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.google.auto.factory</groupId>
