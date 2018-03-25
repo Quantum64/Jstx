@@ -5,17 +5,20 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import co.q64.jstx.annotation.Version;
 import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.lang.Program;
 import co.q64.jstx.lang.ProgramFactory;
 import co.q64.jstx.lexer.Lexer;
 import co.q64.jstx.runtime.Output;
+import lombok.Getter;
 
 @Singleton
 public class Jstx {
 	protected @Inject Jstx() {}
 
+	protected @Getter @Version @Inject String version;
 	protected @Inject Compiler compiler;
 	protected @Inject Lexer lexer;
 	protected @Inject ProgramFactory programFactory;

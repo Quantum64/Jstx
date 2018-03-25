@@ -2,6 +2,7 @@ package co.q64.jstx.compiler;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
 
@@ -10,7 +11,7 @@ import lombok.Getter;
 @AutoFactory
 public class CompilerOutput {
 	private @Getter boolean success;
-	private @Getter String error, program;
+	private @Getter String error;
 	private List<String> compiledLines, instructionLines;
 
 	protected CompilerOutput(String error) {
@@ -18,8 +19,7 @@ public class CompilerOutput {
 		this.success = false;
 	}
 
-	protected CompilerOutput(String program, List<String> compiledLines, List<String> instructionLines) {
-		this.program = program;
+	protected CompilerOutput(List<String> compiledLines, List<String> instructionLines) {
 		this.compiledLines = compiledLines;
 		this.instructionLines = instructionLines;
 		this.success = true;
@@ -34,9 +34,9 @@ public class CompilerOutput {
 					offsetLength = s.length();
 				}
 			}
-			result.add(program);
+			result.add(getProgram());
 			result.add(new String());
-			result.add("Size: " + program.length() + " bytes");
+			result.add("Size: " + getProgram().length() + " bytes");
 			result.add("Instructions: " + instructionLines.size());
 			result.add(new String());
 			for (int i = 0; i < compiledLines.size(); i++) {
@@ -58,5 +58,9 @@ public class CompilerOutput {
 			result.add(error);
 		}
 		return result;
+	}
+
+	public String getProgram() {
+		return compiledLines.stream().collect(Collectors.joining());
 	}
 }

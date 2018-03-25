@@ -79,7 +79,7 @@
 			<dependency>
 				<groupId>co.q64.jstx</groupId>
 				<artifactId>JstxCore</artifactId>
-				<version>1.0</version>
+				<version>${jstx.core.version}</version>
 				<classifier>sources</classifier>
 			</dependency>
 			<dependency>

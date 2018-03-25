@@ -19,22 +19,22 @@ public class StackOpcodes implements OpcodeRegistry {
 
 	@Override
 	public void register(Opcodes op) {
-		op.reg("dup 2",  stack -> stack.dup(2));
-		op.reg("dup 3",  stack -> stack.dup(3));
-		op.reg("dup 4",  stack -> stack.dup(4));
-		op.reg("dup 5",  stack -> stack.dup(5));
-		op.reg("dup 6",  stack -> stack.dup(6));
-		op.reg("dup 7",  stack -> stack.dup(7));
-		op.reg("dup x",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 0",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 1",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 2",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 3",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 4",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 5",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda 6",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("lda x",  stack -> stack.dup(stack.pop().asInt()));
-		op.reg("flatten",  stack -> {
+		op.reg("dup 2", stack -> stack.dup(2));
+		op.reg("dup 3", stack -> stack.dup(3));
+		op.reg("dup 4", stack -> stack.dup(4));
+		op.reg("dup 5", stack -> stack.dup(5));
+		op.reg("dup 6", stack -> stack.dup(6));
+		op.reg("dup 7", stack -> stack.dup(7));
+		op.reg("dup x", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 0", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 1", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 2", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 3", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 4", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 5", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda 6", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("lda x", stack -> stack.dup(stack.pop().asInt()));
+		op.reg("flatten", stack -> {
 			if (stack.size() <= 0) {
 				return;
 			}
@@ -45,7 +45,7 @@ public class StackOpcodes implements OpcodeRegistry {
 			stack.clr();
 			stack.push(values);
 		});
-		op.reg("flatten hard",  stack -> {
+		op.reg("flatten hard", stack -> {
 			if (stack.size() <= 0) {
 				return;
 			}
@@ -56,7 +56,7 @@ public class StackOpcodes implements OpcodeRegistry {
 			stack.clr();
 			stack.push(value.toString());
 		});
-		op.reg("flatten soft",  stack -> {
+		op.reg("flatten soft", stack -> {
 			if (stack.size() <= 0) {
 				return;
 			}
@@ -70,6 +70,8 @@ public class StackOpcodes implements OpcodeRegistry {
 			stack.clr();
 			stack.push(value.toString());
 		});
+
+		op.reg("stack.size", stack -> stack.push(stack.size()));
 		// @formatter:off
 	}
 }

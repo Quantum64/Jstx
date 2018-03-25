@@ -42,7 +42,7 @@ public class JstxGWT implements EntryPoint {
 		root.add(main);
 		if (dev) {
 			HTML languageLabel = new HTML("<h1>Jstx Online Compiler (GWT)</h1>");
-			HTML versionLabel = new HTML("<span class=\"label\">Version 1.0</span>");
+			HTML versionLabel = new HTML("<h3 class=\"title\">Version " + jstx.getVersion() + "</h3>");
 			main.setWidth("100%");
 			main.setHeight("100%");
 			main.add(languageLabel);
@@ -158,9 +158,11 @@ public class JstxGWT implements EntryPoint {
 			});
 		} else {
 			HTML languageLabel = new HTML("<h1>Jstx Online Interpreter (GWT)</h1>");
+			HTML versionLabel = new HTML("<h3 class=\"title\">Version " + jstx.getVersion() + "</h3>");
 			main.setWidth("100%");
 			main.setHeight("100%");
 			main.add(languageLabel);
+			main.add(versionLabel);
 
 			HorizontalPanel buttonsParent = new HorizontalPanel();
 			HorizontalPanel buttons = new HorizontalPanel();

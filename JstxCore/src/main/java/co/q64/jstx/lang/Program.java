@@ -58,7 +58,9 @@ public class Program {
 		this.instruction = 0;
 		this.start = System.currentTimeMillis();
 		this.iterators.clear();
-		stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
+		if (args.length > 0) {
+			stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
+		}
 		while (true) {
 			if (terminated) {
 				break;
