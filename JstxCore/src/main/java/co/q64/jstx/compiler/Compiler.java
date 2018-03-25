@@ -31,7 +31,7 @@ public class Compiler {
 			}
 			StringBuilder updated = new StringBuilder();
 			for (char c : current.toCharArray()) {
-				if (String.valueOf(c).equals("'") || String.valueOf(c).equals("#") || String.valueOf(c).equals("/")) {
+				if (String.valueOf(c).equals("'") || String.valueOf(c).equals("#")) {
 					break;
 				}
 				updated.append(c);

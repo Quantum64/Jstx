@@ -20,11 +20,6 @@ public class Jstx {
 	protected @Inject Lexer lexer;
 	protected @Inject ProgramFactory programFactory;
 
-	public static void main(String[] args) {
-		JstxComponent component = DaggerJstxComponent.create();
-		
-	}
-
 	public CompilerOutput compileProgram(List<String> lines) {
 		return compiler.compile(lines);
 	}
