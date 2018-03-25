@@ -12,7 +12,6 @@ site/
 ## Eclipse and IntelliJ
 #################
 .idea/
-test/
 *.pydevproject
 .metadata
 bin/
