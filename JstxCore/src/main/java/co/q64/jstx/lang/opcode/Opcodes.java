@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -50,6 +51,15 @@ public class Opcodes {
 
 	public Consumer<Stack> getExecutor(int id) {
 		return opcodes.get(id);
+	}
+
+	public Optional<String> getName(int id) {
+		for (Entry<String, Integer> e : opcodeNames.entrySet()) {
+			if (e.getValue().equals(id)) {
+				return Optional.of(e.getKey());
+			}
+		}
+		return Optional.empty();
 	}
 
 	public int getFlag(OpcodeMarker marker) {

@@ -11,11 +11,13 @@ import lombok.Getter;
 
 @AutoFactory
 public class Instruction {
+	private Opcodes opcodes;
 	private @Getter Integer opcode;
 	private Consumer<Stack> executor;
 	private Value value;
 
 	protected Instruction(@Provided Opcodes opcodes, int opcode) {
+		this.opcodes = opcodes;
 		this.opcode = opcode;
 		this.executor = opcodes.getExecutor(opcode);
 	}
@@ -35,5 +37,15 @@ public class Instruction {
 			executor.accept(stack);
 		}
 		// no-op
+	}
+
+	public String getInstruction() {
+		if (value != null) {
+			return "load " + value.toString();
+		}
+		if (executor != null) {
+			return opcodes.getName(opcode).orElse("undefined");
+		}
+		return "nop";
 	}
 }

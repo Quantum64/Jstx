@@ -18,7 +18,7 @@ import lombok.Getter;
 public class Stack {
 	private Null nul;
 	private @Getter Program program;
-	private List<Value> stack = new ArrayList<>();
+	private @Getter List<Value> stack = new ArrayList<>();
 	private LiteralFactory literal;
 
 	protected @Inject Stack(@Provided Null nul, @Provided LiteralFactoryFactory literal, Program program) {

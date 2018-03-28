@@ -1,7 +1,9 @@
 package co.q64.jstx.opcode;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -72,6 +74,7 @@ public class StackOpcodes implements OpcodeRegistry {
 		});
 
 		op.reg("stack.size", stack -> stack.push(stack.size()));
+		op.reg("stack.print", stack -> Stream.concat(Stream.concat(Arrays.asList("== BEGIN STACK ==", "").stream(), stack.getStack().stream()), Arrays.asList("", "== END STACK ==").stream()).forEach(v -> stack.getProgram().getOutput().println(v.toString())));
 		// @formatter:off
 	}
 }

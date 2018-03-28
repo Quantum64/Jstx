@@ -88,12 +88,14 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("exit", stack -> stack.getProgram().terminate());
 		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint());
 		op.reg("restart", stack -> stack.getProgram().jumpToNode(1));
-		op.reg("jump", stack -> stack.getProgram().jumpToNode(stack.pop().asInt()));
+		op.reg("jump", stack -> stack.getProgram().jump(stack.pop().asInt()));
+		op.reg("return", stack -> stack.getProgram().jumpReturn());
 		op.reg("+", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.PLUS)));
 		op.reg("-", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MINUS)));
 		op.reg("*", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MULTIPLY)));
 		op.reg("/", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.DIVIDE)));
 		op.reg("%", stack -> stack.push(stack.peek(2).asInt() % stack.pull(2).asInt()));
+		op.reg("nop", stack -> {});
 		// 0x37
 
 	}

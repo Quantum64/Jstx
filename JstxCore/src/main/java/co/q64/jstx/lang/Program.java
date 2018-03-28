@@ -32,8 +32,9 @@ public class Program {
 	private @Getter Registers registers;
 
 	private @Getter int instruction;
-	private boolean printOnTerminate, terminated;
+	private @Getter boolean printOnTerminate, terminated;
 	private Deque<Iterator> iterators = new ArrayDeque<>();
+	private Deque<Integer> jumps = new ArrayDeque<>();
 	private @Getter boolean lastConditional = false; // TODO replace with stack?
 	private long start;
 	private String[] args;
@@ -51,6 +52,10 @@ public class Program {
 	}
 
 	public void execute() {
+		execute(true);
+	}
+
+	public void execute(boolean full) {
 		this.stack = stackFactory.create(this);
 		this.registers = registersFactory.create();
 		this.printOnTerminate = true;
@@ -58,10 +63,11 @@ public class Program {
 		this.instruction = 0;
 		this.start = System.currentTimeMillis();
 		this.iterators.clear();
+		this.jumps.clear();
 		if (args.length > 0) {
 			stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
 		}
-		while (true) {
+		while (full) {
 			if (terminated) {
 				break;
 			}
@@ -72,13 +78,20 @@ public class Program {
 				crash("Unusually long execution time! (2000ms)");
 				continue;
 			}
-			Instruction current = instructions.get(instruction);
-			instruction++;
-			current.execute(stack);
+			step();
 		}
 		if (printOnTerminate) {
 			output.println(stack.pop().toString());
 		}
+	}
+
+	public void step() {
+		if (instructions.size() < instruction) {
+			return;
+		}
+		Instruction current = instructions.get(instruction);
+		instruction++;
+		current.execute(stack);
 	}
 
 	public void iterate(boolean onStack) {
@@ -112,18 +125,10 @@ public class Program {
 		this.printOnTerminate = false;
 	}
 
-	/*
-	public void jump(int line) {
-		for (int i = 0; i < instructions.size(); i++) {
-			Instruction insn = instructions.get(i);
-			if (insn.getLine() == line) {
-				instruction = i;
-				return;
-			}
-		}
-		crash("JMP attempted to jump outside the program! (Instruction " + instructions.get((instruction - 1)).getLine() + " JMP to " + line + ")");
+	public void jump(int node) {
+		jumps.add(instruction);
+		jumpToNode(node);
 	}
-	*/
 
 	public void jumpToNode(int node) {
 		if (node >= instructions.size()) {
@@ -167,6 +172,13 @@ public class Program {
 				return;
 			}
 		}
+	}
+
+	public void jumpReturn() {
+		if (jumps.size() <= 0) {
+			return;
+		}
+		jumpToNode(jumps.poll());
 	}
 
 	public void warn(String message) {
