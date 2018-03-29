@@ -89,12 +89,14 @@ public class Stack {
 		}
 	}
 
-	public void push(Value value) {
+	public Stack push(Value value) {
 		stack.add(value);
+		return this;
 	}
 
-	public void push(Object value) {
+	public Stack push(Object value) {
 		stack.add(literal.create(value.toString()));
+		return this;
 	}
 
 	public void push(List<Value> values) {

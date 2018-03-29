@@ -215,7 +215,7 @@ public class JstxGWT implements EntryPoint {
 			argumentsEditor.startEditor();
 			argumentsEditor.setShowPrintMargin(false);
 			argumentsEditor.setTheme(AceEditorTheme.TWILIGHT);
-			String argsParam = Window.Location.getParameter("code");
+			String argsParam = Window.Location.getParameter("args");
 			if (argsParam != null) {
 				try {
 					argumentsEditor.setText(new String(Base64.fromBase64(argsParam), "UTF-8"));

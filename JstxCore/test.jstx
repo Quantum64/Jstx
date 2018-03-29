@@ -1,0 +1,8 @@
+jump hello
+def hello
+load hello
+load world
+flatten soft
+string.titleCase
+load !
++

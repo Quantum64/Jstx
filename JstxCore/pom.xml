@@ -102,6 +102,12 @@
 					<shadedClassifierName>final</shadedClassifierName>
 					<promoteTransitiveDependencies>false</promoteTransitiveDependencies>
 					<minimizeJar>false</minimizeJar>
+					<transformers>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<mainClass>co.q64.jstx.JstxMain</mainClass>
+						</transformer>
+					</transformers>
 				</configuration>
 				<executions>
 					<execution>

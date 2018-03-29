@@ -43,6 +43,16 @@ public class StringOpcodes implements OpcodeRegistry {
 		op.reg("string.reverseconcat", stack -> stack.push(stack.pop().toString().concat(stack.pop().toString())));
 		op.reg("string.charValue", stack -> stack.push(((int) stack.pop().asChar())));
 
+		op.reg("string.deleteEnd", stack -> {
+			String target = stack.pop().toString();
+			String str = stack.pop().toString();
+			if (str.endsWith(target)) {
+				stack.push(str.substring(0, str.length() - target.length()));
+				return;
+			}
+			stack.push(str);
+		});
+
 		op.reg("string.titleCase", stack -> {
 			char[] chars = stack.pop().toString().toCharArray();
 			StringBuilder result = new StringBuilder();

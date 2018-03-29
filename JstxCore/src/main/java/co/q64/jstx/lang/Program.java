@@ -126,7 +126,7 @@ public class Program {
 	}
 
 	public void jump(int node) {
-		jumps.add(instruction);
+		jumps.push(instruction);
 		jumpToNode(node);
 	}
 
@@ -176,7 +176,7 @@ public class Program {
 
 	public void jumpReturn() {
 		if (jumps.size() <= 0) {
-			return;
+			crash("Call stack underflow detected! Likely attempted to return without calling a function: did program execution fall through a function declaration? (Instruction " + (instruction - 1) + " RETURN)");
 		}
 		jumpToNode(jumps.poll());
 	}

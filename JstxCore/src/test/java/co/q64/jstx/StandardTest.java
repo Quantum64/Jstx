@@ -6,22 +6,32 @@ import co.q64.jstx.util.SimpleJstxTest;
 
 public class StandardTest {
 	@Test
-	public void testAddition() {
-		new SimpleJstxTest("load 4", "load 5", "+").execute("9");
+	public void testLoadIncompressibleString() {
+		new SimpleJstxTest("load H1e2l3l4o5 6W7o8r9l0d!").execute("H1e2l3l4o5 6W7o8r9l0d!");
 	}
 
 	@Test
-	public void testSubtraction() {
-		new SimpleJstxTest("load 10", "load 8", "-").execute("2");
+	public void testLoadLowercaseString() {
+		new SimpleJstxTest("load hello world").execute("hello world");
 	}
 
 	@Test
-	public void testMultiplication() {
-		new SimpleJstxTest("load 5", "load 6", "*").execute("30");
+	public void testLoadTitlecaseString() {
+		new SimpleJstxTest("load Hello World").execute("Hello World");
 	}
 
 	@Test
-	public void testDivision() {
-		new SimpleJstxTest("load 30", "load 10", "/").execute("3");
+	public void testLoadSingleChar() {
+		new SimpleJstxTest("load Q").execute("Q");
+	}
+
+	@Test
+	public void testLoadDoubleChar() {
+		new SimpleJstxTest("load 64").execute("64");
+	}
+
+	@Test
+	public void testLoadLargeNumber() {
+		new SimpleJstxTest("load 1234567890987654321").execute("1234567890987654321");
 	}
 }

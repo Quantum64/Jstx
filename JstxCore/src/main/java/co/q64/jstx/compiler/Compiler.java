@@ -142,7 +142,7 @@ public class Compiler {
 				for (int i = 1; i < chars.length; i++) {
 					if (Character.isUpperCase(chars[i])) {
 						if (String.valueOf(chars[i - 1]).equals(" ")) {
-							return Optional.empty();
+							continue;
 						}
 						valid = false;
 						break;
@@ -155,7 +155,7 @@ public class Compiler {
 				}
 				if (valid) {
 					String lower = load.toLowerCase();
-					if (smaz.canCompress(load)) {
+					if (smaz.canCompress(lower)) {
 						byte[] compressed = smaz.compress(lower);
 						if (compressed.length < lower.length() && compressed.length <= 256 && compressed.length > 0) {
 							result.append(opcodes.getChars(OpcodeMarker.COMPRESSION3).getCharacter());

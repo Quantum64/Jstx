@@ -60,14 +60,14 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("if >=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.GREATER) || v.compare(o, CompareType.EQUAL)));
 		op.reg("if <", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.LESS)));
 		op.reg("if <=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.LESS) || v.compare(o, CompareType.EQUAL)));
+		op.reg("if true", CONDITIONAL, stack -> conditional(stack.push(true), (v, o) -> v.compare(o, CompareType.EQUAL)));
+		op.reg("if false", CONDITIONAL, stack -> conditional(stack.push(false), (v, o) -> v.compare(o, CompareType.EQUAL)));
 		op.reg("else", ELSE, stack -> processEsle(stack));
 		op.reg("pop", stack -> stack.pop());
 		op.reg("pop 2", stack -> stack.pop(2));
 		op.reg("clr", stack -> stack.clr());
 		op.reg("dup", stack -> stack.dup());
 		op.reg("swp", stack -> stack.swap());
-		op.reg("load true", stack -> stack.push("true"));
-		op.reg("load false", stack -> stack.push("false"));
 		op.reg("ldv", stack -> stack.push(stack.getProgram().getRegisters().getGlobal().get(stack.pop())));
 		op.reg("sdv", stack -> stack.getProgram().getRegisters().getGlobal().put(stack.pop(), stack.pop()));
 		op.reg("ldr a", stack -> stack.push(stack.getProgram().getRegisters().getA()));
