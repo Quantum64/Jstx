@@ -15,6 +15,7 @@ import co.q64.jstx.factory.LiteralFactoryFactory;
 import co.q64.jstx.lang.opcode.OpcodeMarker;
 import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.LiteralFactory;
+import co.q64.jstx.lexer.Lexer;
 import co.q64.jstx.runtime.Output;
 import lombok.Getter;
 
@@ -30,6 +31,7 @@ public class Program {
 	private @Getter List<Instruction> instructions;
 	private @Getter Stack stack;
 	private @Getter Registers registers;
+	private @Getter String source;
 
 	private @Getter int instruction;
 	private @Getter boolean printOnTerminate, terminated;
@@ -39,12 +41,13 @@ public class Program {
 	private long start;
 	private String[] args;
 
-	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, @Provided Opcodes opcodes, List<Instruction> instructions, String[] args, Output output) {
+	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, @Provided Opcodes opcodes, @Provided Lexer lexer, String source, String[] args, Output output) {
 		this.stackFactory = stackFactory;
 		this.registersFactory = registersFactory;
 		this.iteratorFactory = iteratorFactory.getFactory();
-		this.instructions = instructions;
+		this.instructions = lexer.parse(source, output);
 		this.literalFactory = literal.getFactory();
+		this.source = source;
 		this.opcodes = opcodes;
 		this.args = args;
 		this.output = output;
@@ -91,7 +94,11 @@ public class Program {
 		}
 		Instruction current = instructions.get(instruction);
 		instruction++;
-		current.execute(stack);
+		try {
+			current.execute(stack);
+		} catch (Exception e) {
+			crash(e.getClass().getSimpleName() + ": " + e.getMessage());
+		}
 	}
 
 	public void iterate(boolean onStack) {

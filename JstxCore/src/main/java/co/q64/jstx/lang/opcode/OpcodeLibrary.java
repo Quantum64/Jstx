@@ -10,6 +10,7 @@ import co.q64.jstx.opcode.DictionaryOpcodes;
 import co.q64.jstx.opcode.ListOpcodes;
 import co.q64.jstx.opcode.LongRegisterOpcodes;
 import co.q64.jstx.opcode.MathOpcodes;
+import co.q64.jstx.opcode.MetaOpcodes;
 import co.q64.jstx.opcode.StackOpcodes;
 import co.q64.jstx.opcode.StandardOpcodes;
 import co.q64.jstx.opcode.StringOpcodes;
@@ -23,10 +24,11 @@ public class OpcodeLibrary {
 	protected @Inject StringOpcodes string;
 	protected @Inject ListOpcodes list;
 	protected @Inject MathOpcodes math;
+	protected @Inject MetaOpcodes meta;
 	protected @Inject LongRegisterOpcodes registry;
 	protected @Inject DictionaryOpcodes dictionary;
 
 	protected List<OpcodeRegistry> get() {
-		return Arrays.asList(standard, stack, string, math, list, registry, dictionary);
+		return Arrays.asList(standard, stack, string, math, list, meta, registry, dictionary);
 	}
 }

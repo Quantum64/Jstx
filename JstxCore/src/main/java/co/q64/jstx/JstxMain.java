@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -15,6 +14,9 @@ import javax.inject.Singleton;
 
 import com.google.common.annotations.GwtIncompatible;
 
+import co.q64.jstx.annotation.Constants.Author;
+import co.q64.jstx.annotation.Constants.Name;
+import co.q64.jstx.annotation.Constants.Version;
 import co.q64.jstx.annotation.GWT;
 import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.inject.StandardModule;
@@ -22,8 +24,12 @@ import co.q64.jstx.inject.SystemModule;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.Program;
 import co.q64.jstx.lang.ProgramFactory;
+import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.Value;
 import co.q64.jstx.lexer.Lexer;
+import co.q64.jstx.runtime.ArgumentIterator;
+import co.q64.jstx.runtime.ArgumentIteratorFactory;
+import co.q64.jstx.runtime.MockOutput;
 import co.q64.jstx.runtime.Output;
 import dagger.Component;
 
@@ -33,12 +39,18 @@ public class JstxMain {
 	protected @Inject Jstx jstx;
 	protected @Inject Output output;
 	protected @Inject Lexer lexer;
+	protected @Inject Opcodes opcodes;
+	protected @Inject MockOutput mockOutput;
 	protected @Inject ProgramFactory programFactory;
+	protected @Inject ArgumentIteratorFactory arguments;
+	protected @Inject @Version String version;
+	protected @Inject @Name String name;
+	protected @Inject @Author String author;
 
-	private String[] args;
+	private String[] cmdArgs;
 
 	private JstxMain(String[] args) {
-		this.args = args;
+		this.cmdArgs = args;
 	}
 
 	public static void main(String[] args) {
@@ -48,30 +60,32 @@ public class JstxMain {
 
 	@Inject
 	protected void start() {
-		jstx.compileProgram(Arrays.asList("load Hello World!"));
-		boolean debug = args.length > 0 && args[0].equalsIgnoreCase("debug");
-		boolean dev = args.length > 0 && args[0].equalsIgnoreCase("dev");
-		if (args.length == 0 || ((debug || dev) && args.length <= 1)) {
-			output.println("Provide a script filename as the " + (debug || dev ? "next" : "first") + " command line argument!");
+		ArgumentIterator args = arguments.create(cmdArgs);
+		if (!args.hasNext()) {
+			output.println(name + " version " + version + " by " + author);
 			return;
 		}
-
-		String[] programArgs = new String[args.length - (dev || debug ? 2 : 1)];
-		if (programArgs.length > 0) {
-			System.arraycopy(args, dev || debug ? 2 : 1, programArgs, 0, programArgs.length);
-		}
+		String current = args.next();
 		try {
-			if (dev) {
-				CompilerOutput compiled = jstx.compileProgram(Files.readAllLines(new File(args[0]).toPath()));
+			if (current.equalsIgnoreCase("dev")) {
+				if (!args.hasNext()) {
+					output.println("Specify a script file name!");
+					return;
+				}
+				CompilerOutput compiled = jstx.compileProgram(Files.readAllLines(new File(args.next()).toPath()));
 				for (String s : compiled.getDisplayOutput()) {
 					output.println(s);
 				}
 				if (compiled.isSuccess()) {
 					output.println("");
-					jstx.runProgram(compiled.getProgram(), programArgs, output);
+					jstx.runProgram(compiled.getProgram(), getArgs(args), output);
 				}
-			} else if (debug) {
-				CompilerOutput compiled = jstx.compileProgram(Files.readAllLines(new File(args[1]).toPath()));
+			} else if (current.equalsIgnoreCase("debug")) {
+				if (!args.hasNext()) {
+					output.println("Specify a script file name!");
+					return;
+				}
+				CompilerOutput compiled = jstx.compileProgram(Files.readAllLines(new File(args.next()).toPath()));
 				for (String s : compiled.getDisplayOutput()) {
 					output.println(s);
 				}
@@ -82,9 +96,9 @@ public class JstxMain {
 					output.println("");
 					output.println("Press any key to begin execution...");
 					in.nextLine();
-					List<Instruction> insns = lexer.parse(compiled.getProgram(), output);
+					List<Instruction> insns = lexer.parse(compiled.getProgram(), mockOutput);
 					List<String> outputBuffer = new ArrayList<String>();
-					Program program = programFactory.create(insns, programArgs, new Output() {
+					Program program = programFactory.create(compiled.getProgram(), getArgs(args), new Output() {
 
 						@Override
 						public void println(String message) {
@@ -135,17 +149,27 @@ public class JstxMain {
 						program.step();
 					}
 				}
+			} else if (current.equalsIgnoreCase("opcodes")) {
+				output.println(opcodes.getDebugInfo());
 			} else {
-				jstx.runProgram(Files.readAllLines(new File(args[1]).toPath()).stream().collect(Collectors.joining()), programArgs, output);
+				jstx.runProgram(Files.readAllLines(new File(current).toPath()).stream().collect(Collectors.joining()), getArgs(args), output);
 			}
 		} catch (FileNotFoundException e) {
-			output.println("The file '" + args[0] + "' could not be found!");
+			output.println("The file '" + e.getMessage() + "' could not be found!");
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
 			output.println("Failed to read script file!");
 			return;
 		}
+	}
+
+	private String[] getArgs(ArgumentIterator itr) {
+		List<String> result = new ArrayList<>();
+		while (itr.hasNext()) {
+			result.add(itr.next());
+		}
+		return result.toArray(new String[0]);
 	}
 
 	@Singleton

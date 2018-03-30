@@ -5,12 +5,11 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import co.q64.jstx.annotation.Version;
+import co.q64.jstx.annotation.Constants.Version;
 import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.compiler.CompilerOutput;
 import co.q64.jstx.lang.Program;
 import co.q64.jstx.lang.ProgramFactory;
-import co.q64.jstx.lexer.Lexer;
 import co.q64.jstx.runtime.Output;
 import lombok.Getter;
 
@@ -20,7 +19,6 @@ public class Jstx {
 
 	protected @Getter @Version @Inject String version;
 	protected @Inject Compiler compiler;
-	protected @Inject Lexer lexer;
 	protected @Inject ProgramFactory programFactory;
 
 	public CompilerOutput compileProgram(List<String> lines) {
@@ -28,7 +26,7 @@ public class Jstx {
 	}
 
 	public void runProgram(String compiled, String[] args, Output output) {
-		Program program = programFactory.create(lexer.parse(compiled, output), args, output);
+		Program program = programFactory.create(compiled, args, output);
 		program.execute();
 	}
 }

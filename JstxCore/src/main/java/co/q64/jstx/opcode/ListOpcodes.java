@@ -22,19 +22,18 @@ public class ListOpcodes implements OpcodeRegistry {
 
 	@Override
 	public void register(Opcodes op) {
-		op.reg("list.explode",  stack -> stack.pop().iterate().forEach(x -> stack.push(x)));
-		op.reg("list.reverse",  stack -> {
+		op.reg("list.explode", stack -> stack.pop().iterate().forEach(x -> stack.push(x)), "Push every value from the first stack value, interpreted as a list.");
+		op.reg("list.reverse", stack -> {
 			val vals = stack.pop().iterate();
 			Collections.reverse(vals);
 			stack.push(vals.stream().map(Object::toString).collect(Collectors.joining(",")));
-		});
-		op.reg("list.range",  stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.joining(","))));
-		op.reg("list.reverseRange",  stack -> {
-			int to = stack.pop().asInt();
-			int from = stack.pop().asInt();
+		}, "Reverses the list in the first stack value.");
+		op.reg("list.range", stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.joining(","))), "Push a list of integers in the range of the second stack value to the first stack value.");
+		op.reg("list.reverseRange", stack -> {
+			int to = stack.pop().asInt(), from = stack.pop().asInt();
 			stack.push(IntStream.rangeClosed(from, to).map(i -> to - i + from - 1).boxed().map(Object::toString).collect(Collectors.joining(",")));
-		});
-		op.reg("list.set",  stack -> {
+		}, "Push a list of integers in decending order in the range of the second stack value to the first stack value. Does not remove the list from the stack.");
+		op.reg("list.set", stack -> {
 			int index = stack.pop().asInt();
 			Value target = stack.pop();
 			List<Value> list = stack.pop().iterate();
@@ -48,8 +47,8 @@ public class ListOpcodes implements OpcodeRegistry {
 				list.add(target);
 			}
 			stack.push(list);
-		});
-		op.reg("list.get",  stack -> {
+		}, "Set the value in the list in the third stack value to the second stack value at the index of the first stack value.");
+		op.reg("list.get", stack -> {
 			int index = stack.pop().asInt();
 			List<Value> list = stack.pop().iterate();
 			if (index >= list.size()) {
@@ -57,6 +56,16 @@ public class ListOpcodes implements OpcodeRegistry {
 				return;
 			}
 			stack.push(list.get(index));
-		});
+		}, "Push the value in the list of the second stack value at the index of the first stack value.");
+		op.reg("list.add", stack -> {
+			List<Value> list = stack.peek(2).iterate();
+			list.add(stack.pull(2));
+			stack.push(list);
+		}, "Add the first stack value to the list in the second stack value. Does not remove the list from the stack.");
+		op.reg("list.remove", stack -> {
+			List<Value> list = stack.peek(2).iterate();
+			list.remove(stack.pull(2));
+			stack.push(list);
+		}, "Remove the first stack value from the list in the second stack value. Does not remove the list from the stack.");
 	}
 }

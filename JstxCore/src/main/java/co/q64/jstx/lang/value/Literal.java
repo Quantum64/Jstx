@@ -23,7 +23,7 @@ public class Literal implements Value {
 		this(literal.toString());
 	}
 
-	protected Literal(List<Value> list) {
+	protected Literal(List<Object> list) {
 		this(list.stream().map(Object::toString).collect(Collectors.joining(",")));
 	}
 

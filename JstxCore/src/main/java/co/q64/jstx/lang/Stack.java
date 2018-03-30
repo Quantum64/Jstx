@@ -99,8 +99,9 @@ public class Stack {
 		return this;
 	}
 
-	public void push(List<Value> values) {
+	public Stack push(List<Object> values) {
 		stack.add(literal.create(values));
+		return this;
 	}
 
 	public int size() {

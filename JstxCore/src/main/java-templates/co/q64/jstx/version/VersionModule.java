@@ -1,6 +1,6 @@
 package co.q64.jstx.version;
 
-import co.q64.jstx.annotation.Version;
+import co.q64.jstx.annotation.Constants.Version;
 import dagger.Module;
 import dagger.Provides;
 

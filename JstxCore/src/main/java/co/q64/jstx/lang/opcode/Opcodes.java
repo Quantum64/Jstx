@@ -3,6 +3,7 @@ package co.q64.jstx.lang.opcode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,7 +26,8 @@ public class Opcodes {
 
 	private int index = 0;
 	private Map<Integer, Consumer<Stack>> opcodes = new HashMap<>();
-	private Map<String, Integer> opcodeNames = new HashMap<>();
+	private Map<String, Integer> names = new LinkedHashMap<>();
+	private Map<String, String> descriptions = new HashMap<>();
 	private Map<OpcodeMarker, List<Integer>> markers = new HashMap<OpcodeMarker, List<Integer>>();
 
 	@Inject
@@ -34,12 +36,26 @@ public class Opcodes {
 	}
 
 	public void reg(String name, Consumer<Stack> exec) {
-		opcodeNames.put(name, index);
-		opcodes.put(index, exec);
-		index++;
+		reg(name, exec, null);
 	}
 
 	public void reg(String name, OpcodeMarker marker, Consumer<Stack> exec) {
+		reg(name, marker, exec, null);
+	}
+
+	public void reg(String name, Consumer<Stack> exec, String description) {
+		if (names.containsKey(name)) {
+			return;
+		}
+		names.put(name, index);
+		opcodes.put(index, exec);
+		index++;
+		if (description != null) {
+			descriptions.put(name, description);
+		}
+	}
+
+	public void reg(String name, OpcodeMarker marker, Consumer<Stack> exec, String description) {
 		reg(name, exec);
 		List<Integer> flags = markers.get(marker);
 		if (flags == null) {
@@ -47,6 +63,9 @@ public class Opcodes {
 			markers.put(marker, flags);
 		}
 		flags.add(index - 1);
+		if (description != null) {
+			descriptions.put(name, description);
+		}
 	}
 
 	public Consumer<Stack> getExecutor(int id) {
@@ -54,7 +73,7 @@ public class Opcodes {
 	}
 
 	public Optional<String> getName(int id) {
-		for (Entry<String, Integer> e : opcodeNames.entrySet()) {
+		for (Entry<String, Integer> e : names.entrySet()) {
 			if (e.getValue().equals(id)) {
 				return Optional.of(e.getKey());
 			}
@@ -74,8 +93,20 @@ public class Opcodes {
 		return lookupChars(getFlag(marker))[0];
 	}
 
+	public String getDescription(String name) {
+		return Optional.ofNullable(descriptions.get(name)).orElse("No description available.");
+	}
+
+	public List<String> getNames() {
+		return new ArrayList<>(names.keySet());
+	}
+
+	public String getDebugInfo() {
+		return "Using " + index + "/" + lookupId(new Chars[] { Chars.xff, Chars.xff }).get() + " opcodes (" + (lookupId(new Chars[] { Chars.xff, Chars.xff }).get() - index) + " remaining)";
+	}
+
 	public Optional<List<Chars>> lookupName(String name) {
-		Integer id = opcodeNames.get(name);
+		Integer id = names.get(name);
 		if (id == null) {
 			return Optional.empty();
 		}
