@@ -46,6 +46,7 @@ public class StringOpcodes implements OpcodeRegistry {
 		op.reg("string.toUpperCase", stack -> stack.push(stack.pop().toString().toUpperCase()), "Push the first stack value with all characters lowercased.");
 		op.reg("string.trim", stack -> stack.push(stack.pop().toString().trim()), "Push the first stack value sans extra whitespace.");
 
+		op.reg("string.subzero", stack -> stack.push(stack.peek(2).toString().substring(0, stack.pull(2).asInt())), "Push the characters of the second stack value indexed before or at the first stack value.");
 		op.reg("string.reverse", stack -> stack.push(new StringBuilder(stack.pop().toString()).reverse()), "Push the first stack value with characters in reverse order.");
 		op.reg("string.reverseconcat", stack -> stack.push(stack.pop().toString().concat(stack.pop().toString())), "Push the first stack value concatenated with the second stack value.");
 		op.reg("string.charValue", stack -> stack.push(((int) stack.pop().asChar())), "Push the integer value of the first character of the first stack value.");

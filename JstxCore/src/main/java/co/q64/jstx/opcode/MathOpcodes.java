@@ -55,5 +55,17 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.toRadians", stack -> stack.push(Math.toRadians(stack.pop().asDouble())), "Push the radian value of the first stack value interpreted as degrees.");
 
 		oc.reg("math.triangular", stack -> stack.push((stack.peek().asInt() * (stack.pop().asInt() + 1)) / 2), "Push the triangular sum of the first stack value.");
+		oc.reg("math.digitalRoot", stack -> stack.push(stack.pop().asInt() - (9 * Math.round(Math.floor((stack.peek().asInt() - 1) / 9f)))), "Push the digital root of the first stack value.");
+		oc.reg("math.digitSum", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).sum()), "Push the sum of the digits of the first stack value.");
+		oc.reg("math.castNines", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).filter(i -> i != 9).sum()), "Push the sum of the digits of the first stack value, casting out nines.");
+
+		oc.reg("math.fibonacci", stack -> {
+			int a = 0, b = 1, term = stack.pop().asInt();
+			while (a < term) {
+				a = a + b;
+				b = a - b;
+			}
+			stack.push(a);
+		}, "Push the fibonacci number indexed at the first stack value.");
 	}
 }

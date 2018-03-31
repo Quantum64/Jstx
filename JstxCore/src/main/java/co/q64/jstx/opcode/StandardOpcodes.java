@@ -64,6 +64,7 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("if false", CONDITIONAL, stack -> conditional(stack.push(false), (v, o) -> v.compare(o, CompareType.EQUAL)), "Enter a conditional block if first stack value exactly equals false.");
 		op.reg("load true", stack -> stack.push(true));
 		op.reg("load false", stack -> stack.push(false));
+		op.reg("load null", stack -> stack.push(nul));
 		op.reg("else", ELSE, stack -> processEsle(stack), "Enter a conditional block if and only if the last conditional block was not executed.");
 		op.reg("pop", stack -> stack.pop(), "Remove the first stack values from the stack.");
 		op.reg("pop 2", stack -> stack.pop(2), "Remove the first two stack values from the stack.");

@@ -14,8 +14,9 @@ public class LongRegisterOpcodes implements OpcodeRegistry {
 	public void register(Opcodes oc) {
 		for (int i = 0; i < 256; i++) {
 			final int lock = i;
-			oc.reg("ldr 0x" + Integer.toHexString(i), stack -> stack.push(stack.getProgram().getRegisters().getLongRegister()[lock]), "Push the value in register 0x" + Integer.toHexString(lock));
-			oc.reg("sdr 0x" + Integer.toHexString(i), stack -> stack.getProgram().getRegisters().getLongRegister()[lock] = stack.pop(), "Store the first stack value in register 0x" + Integer.toHexString(lock));
+			String register = "0x" + (i < 16 ? "0" : "") + Integer.toHexString(i);
+			oc.reg("ldr " + register, stack -> stack.push(stack.getProgram().getRegisters().getLongRegister()[lock]));
+			oc.reg("sdr " + register, stack -> stack.getProgram().getRegisters().getLongRegister()[lock] = stack.pop());
 		}
 	}
 }

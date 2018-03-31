@@ -25,5 +25,7 @@ public class MetaOpcodes implements OpcodeRegistry {
 		oc.reg("meta.source", stack -> stack.push(stack.getProgram().getSource()), "Push the program's source code.");
 		oc.reg("meta.compile", stack -> stack.push(compiler.get().compile(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.toList())).getProgram()), "Compile a " + name + " program using a list of instructions on the top of the stack.");
 		oc.reg("meta.lex", stack -> stack.push(lexer.get().parse(stack.pop().toString(), mock)), "Push a list of " + name + " instructions from the compiled program on the top of the stack.");
+		oc.reg("meta.crash", stack -> stack.getProgram().crash("Manually initiated crash"), "Crash the program.");
+		oc.reg("meta.crashMessage", stack -> stack.getProgram().crash(stack.pop().toString()), "Crash the program using the first stack value as the error message.");
 	}
 }

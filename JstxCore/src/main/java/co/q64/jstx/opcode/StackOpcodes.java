@@ -26,14 +26,14 @@ public class StackOpcodes implements OpcodeRegistry {
 		op.reg("dup 6", stack -> stack.dup(6), "Push six copies of the first stack value.");
 		op.reg("dup 7", stack -> stack.dup(7), "Push seven copies of the first stack value.");
 		op.reg("dup x", stack -> stack.dup(Math.abs(stack.pop().asInt())), "Push the second stack value the absolute value of the first stack value times.");
-		op.reg("lda 0", stack -> stack.dup(stack.pop().asInt()), "Push the first command line argument."); //TODO
-		op.reg("lda 1", stack -> stack.dup(stack.pop().asInt()), "Push the second command line argument.");
-		op.reg("lda 2", stack -> stack.dup(stack.pop().asInt()), "Push the third command line argument.");
-		op.reg("lda 3", stack -> stack.dup(stack.pop().asInt()), "Push the fourth command line argument.");
-		op.reg("lda 4", stack -> stack.dup(stack.pop().asInt()), "Push the fifth command line argument.");
-		op.reg("lda 5", stack -> stack.dup(stack.pop().asInt()), "Push the sixth command line argument.");
-		op.reg("lda 6", stack -> stack.dup(stack.pop().asInt()), "Push the seventh command line argument.");
-		op.reg("lda x", stack -> stack.dup(stack.pop().asInt()), "Push the command line argument indexed by the first stack value.");
+		op.reg("lda 0", stack -> stack.push(stack.getProgram().getArgs()[0]), "Push the first command line argument.");
+		op.reg("lda 1", stack -> stack.push(stack.getProgram().getArgs()[1]), "Push the second command line argument.");
+		op.reg("lda 2", stack -> stack.push(stack.getProgram().getArgs()[2]), "Push the third command line argument.");
+		op.reg("lda 3", stack -> stack.push(stack.getProgram().getArgs()[3]), "Push the fourth command line argument.");
+		op.reg("lda 4", stack -> stack.push(stack.getProgram().getArgs()[4]), "Push the fifth command line argument.");
+		op.reg("lda 5", stack -> stack.push(stack.getProgram().getArgs()[5]), "Push the sixth command line argument.");
+		op.reg("lda 6", stack -> stack.push(stack.getProgram().getArgs()[6]), "Push the seventh command line argument.");
+		op.reg("lda x", stack -> stack.push(stack.getProgram().getArgs()[stack.pop().asInt()]), "Push the command line argument indexed by the first stack value.");
 		op.reg("flatten", stack -> {
 			if (stack.size() <= 0) {
 				return;

@@ -12,9 +12,7 @@
 	<version>${jstx.core.version}</version>
 
 	<build>
-		<!-- Output classes directly into the webapp, so that IDEs and "mvn process-classes" 
-			update them in DevMode -->
-		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
+		<outputDirectory>${project.build.directory}/build/classes</outputDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -71,34 +69,50 @@
 					<moduleName>co.q64.jstx.gwt.JstxGWT</moduleName>
 					<moduleShortName>JstxGWT</moduleShortName>
 					<failOnError>true</failOnError>
-					<!-- GWT compiler 2.8 requires 1.8, hence define sourceLevel here if 
-						you use a different source language for java compilation -->
 					<sourceLevel>1.8</sourceLevel>
-					<!-- Compiler configuration -->
 					<compilerArgs>
-						<!-- Ask GWT to create the Story of Your Compile (SOYC) (gwt:compile) -->
 						<arg>-compileReport</arg>
 						<arg>-XcompilerMetrics</arg>
 					</compilerArgs>
 					<jvmArgs>
 						<args>-javaagent:${lombok.lib}=ECJ</args>
 					</jvmArgs>
-					<!-- DevMode configuration -->
 					<warDir>${project.build.directory}/${project.build.finalName}</warDir>
 					<classpathScope>compile+runtime</classpathScope>
-					<!-- URL(s) that should be opened by DevMode (gwt:devmode). -->
 					<startupUrls>
 						<startupUrl>JstxGWT.html</startupUrl>
 					</startupUrls>
 				</configuration>
 			</plugin>
-			<!-- Skip normal test execution, we use gwt:test instead -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.17</version>
 				<configuration>
 					<skip>true</skip>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<delete>
+									<dirset dir="${project.build.directory}/${project.build.finalName}"
+										includes="META-INF" />
+									<dirset dir="${project.build.directory}/${project.build.finalName}"
+										includes="WEB-INF" />
+								</delete>
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>

@@ -32,6 +32,7 @@ public class Program {
 	private @Getter Stack stack;
 	private @Getter Registers registers;
 	private @Getter String source;
+	private @Getter String[] args;
 
 	private @Getter int instruction;
 	private @Getter boolean printOnTerminate, terminated;
@@ -39,7 +40,6 @@ public class Program {
 	private Deque<Integer> jumps = new ArrayDeque<>();
 	private @Getter boolean lastConditional = false; // TODO replace with stack?
 	private long start;
-	private String[] args;
 
 	protected Program(@Provided StackFactory stackFactory, @Provided RegistersFactory registersFactory, @Provided IteratorFactoryFactory iteratorFactory, @Provided LiteralFactoryFactory literal, @Provided Opcodes opcodes, @Provided Lexer lexer, String source, String[] args, Output output) {
 		this.stackFactory = stackFactory;
@@ -140,6 +140,7 @@ public class Program {
 	public void jumpToNode(int node) {
 		if (node >= instructions.size()) {
 			crash("Jump to node attempted to jump outside the program! (Instruction " + (instruction - 1) + " JMP to " + node + ")");
+			return;
 		}
 		instruction = node;
 	}
@@ -184,6 +185,7 @@ public class Program {
 	public void jumpReturn() {
 		if (jumps.size() <= 0) {
 			crash("Call stack underflow detected! Likely attempted to return without calling a function: did program execution fall through a function declaration? (Instruction " + (instruction - 1) + " RETURN)");
+			return;
 		}
 		jumpToNode(jumps.poll());
 	}
