@@ -180,9 +180,9 @@ public class Compiler {
 				}
 			}
 			if (load.length() > 2) {
-				if (index > 0) {
-					result.append(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter());
-				}
+				//if (index > 0) { TODO fix implied literal
+				result.append(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter());
+				//}
 				result.append(load);
 				result.append(opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter());
 				return Optional.empty();

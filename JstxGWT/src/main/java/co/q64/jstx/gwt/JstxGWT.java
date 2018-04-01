@@ -338,8 +338,76 @@ public class JstxGWT implements EntryPoint {
 			StringBuilder ref = new StringBuilder();
 			// Header
 			ref.append("                                    ,----,               \n         ,---._                   ,/   .`|               \n       .-- -.' \\   .--.--.      ,`   .'  :,--,     ,--,  \n       |    |   : /  /    '.  ;    ;     /|'. \\   / .`|  \n       :    ;   ||  :  /`. /.'___,/    ,' ; \\ `\\ /' / ;  \n       :        |;  |  |--` |    :     |  `. \\  /  / .'  \n       |    :   :|  :  ;_   ;    |.';  ;   \\  \\/  / ./   \n       :          \\  \\    `.`----'  |  |    \\  \\.'  /    \n       |    ;   |  `----.   \\   '   :  ;     \\  ;  ;     \n   ___ l           __ \\  \\  |   |   |  '    / \\  \\  \\    \n /    /\\    J   : /  /`--'  /   '   :  |   ;  /\\  \\  \\   \n/  ../  `..-    ,'--'.     /    ;   |.'  ./__;  \\  ;  \\  \n\\    \\         ;   `--'---'     '---'    |   : / \\  \\  ; \n \\    \\      ,'                          ;   |/   \\  ' | \n  \"---....--'                            `---'     `--`  ");
-			ref.append("\n  _____                                               _                _____ _    _ _     _      \n |  __ \\                                             (_)              / ____| |  | (_)   | |     \n | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _  | |  __| |  | |_  __| | ___ \n |  ___/ '__/ _ \\ / _` | '__/ _` | '_ ` _ \\| '_ ` _ \\| | '_ \\ / _` | | | |_ | |  | | |/ _` |/ _ \\\n | |   | | | (_) | (_| | | | (_| | | | | | | | | | | | | | | | (_| | | |__| | |__| | | (_| |  __/\n |_|   |_|  \\___/ \\__, |_|  \\__,_|_| |_| |_|_| |_| |_|_|_| |_|\\__, |  \\_____|\\____/|_|\\__,_|\\___|\n                   __/ |                                       __/ |                             \n                  |___/                                       |___/                              \n");
+			ref.append("\n  _____                                               _                _____ _    _ _     _      \n |  __ \\                                             (_)              / ____| |  | (_)   | |     \n | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _  | |  __| |  | |_  __| | ___ \n |  ___/ '__/ _ \\ / _` | '__/ _` | '_ ` _ \\| '_ ` _ \\| | '_ \\ / _` | | | |_ | |  | | |/ _` |/ _ \n | |   | | | (_) | (_| | | | (_| | | | | | | | | | | | | | | | (_| | | |__| | |__| | | (_| |  __/\n |_|   |_|  \\___/ \\__, |_|  \\__,_|_| |_| |_|_| |_| |_|_|_| |_|\\__, |  \\_____|\\____/|_|\\__,_|\\___|\n                   __/ |                                       __/ |                             \n                  |___/                                       |___/                              \n");
+			// The Basics
+			ref.append("  _____ _             ____            _           \n |_   _| |__   ___   | __ )  __ _ ___(_) ___ ___  \n   | | | '_ \\ / _ \\  |  _ \\ / _` / __| |/ __/ __| \n   | | | | | |  __/  | |_) | (_| \\__ \\ | (__\\__ \\ \n   |_| |_| |_|\\___|  |____/ \\__,_|___/_|\\___|___/ \n");
+			ref.append(line("= Overview ="));
+			ref.append(wrapLine("Welcome to Jstx (“Java Stax”), a golfing language inspired by Stax and written in pure Java by Quantum64. “Wait, what? Java? But this is a web based language...” For your convenience, I have used Google Web Toolkit to compile the Java based compiler and interpreter to JavaScript, as well create a nice user interface for compiling, running, and sharing your programs. The only feature currently missing from the web version is the real time debugger, which is only available in the command line version."));
+			ref.append(line());
+			ref.append(line("= The Compiler ="));
+			ref.append(wrapLine("One difference between Jstx and most other widely used golfing languages is that Jstx is actually a compiled language. This means that you don’t need to worry about managing golfed code. The compiler does all the golfing for you. You will be writing all your programs in uncompiled Jstx only, as the compiled Jstx code can vary from version to version of the compiler and interpreter. In addition to compiling your code, the compiler also generates an annotated version of the compiled code for you to stick on your Code Golf Stack Exchange answer and sweep in that sweet sweet reputation for no additional work. Make sure you’re in “Dev Mode” when writing Jstx code so that your code is compiled correctly. “Interpret Mode” will only read compiled Jstx code. Note that while some code can be tested in development mode, code that requires command line arguments must be run from the interpreter."));
+			ref.append(line());
+			ref.append(line("= Programming ="));
+			ref.append(wrapLine("Jstx is a stack based language, which means that the program's main memory is stored as a stack of values. Values in Jstx are untyped, so each opcode will attempt to convert its arguments to the appropriate type before execution. All the opcodes in Jstx will take arguments from the stack and add (hereon referred to as “push”) their results to the stack if applicable. Unless specifically stated in the opcode’s description, each opcode will remove (hereon referred to as “pop”) its arguments from the stack. Jstx also has 6 registers addressable with one byte and 256 registers addressable with two bytes. These registers allow values to be stored off of the stack. Jstx programs consist of one opcode per line, with additional blank lines or comments acceptable. A Jstx program will push all command line arguments onto the stack before execution begins. As a Jstx program exits normally, it will print the top value on the stack followed by a newline unless the program specifically instructs the interpreter not to."));
+			ref.append(line());
+			ref.append(line("= Comments ="));
+			ref.append(wrapLine("Blank lines will be ignored by the compiler. All text after a # or ‘ symbol will be ignored by the compiler until the next line, unless these characters appear on the same line as a ‘load’ opcode."));
+			ref.append(line());
+			ref.append(line("= Functions ="));
+			ref.append(wrapLine("Jstx supports functions complete with a call stack. Note that functions are relatively expensive in terms of byte count, so it’s better to try and write your program without them. Functions are declared with a ‘def function-name’ opcode, where function-name can be any string literal used to call your function. Function blocks are closed with a ‘return’ opcode, which will return program execution to where the function was called. Functions have no explicit arguments or return values, instead use the stack to pass information to functions and return values to the caller. A function is called with the ‘jump function-name’ opcode, where the function name is specified in a ‘def’ opcode."));
+			ref.append(line("Here is an example of function usage."));
+			ref.append(line());
+			ref.append(line("load 1"));
+			ref.append(line("load 2"));
+			ref.append(line("jump sum   # Call the sum function"));
+			ref.append(line("println    # Print the result of the sum function"));
+			ref.append(line("terminate  # Terminate the program so the function doesn’t execute again"));
+			ref.append(line());
+			ref.append(line("def sum    # Define the sum function"));
+			ref.append(line("+          # Sum the top two elements on the stack and push result"));
+			ref.append(line("return     # Return execution to the caller"));
+			ref.append(line());
+			ref.append(wrapLine("Watch out for function declaration fallthrough! Function declarations are removed from compiled Jstx code in order to save bytes. This means that program execution call fall through a function declaration and cause the program to crash."));
+			ref.append(line("Here is the same example without the ‘terminate’ opcode."));
+			ref.append(line());
+			ref.append(line("load 1"));
+			ref.append(line("load 2"));
+			ref.append(line("jump sum   # Call the sum function"));
+			ref.append(line("println    # Print the result of the sum function"));
+			ref.append(line("           # Program execution continues and falls through the next line, causing the sum function to be called for the second time in an illegal way"));
+			ref.append(line("def sum"));
+			ref.append(line("+          # The sum opcode is executed for the second time"));
+			ref.append(line("return     # Upon the second execution of the return statement, the call stack underflows and the program crashes"));
+			ref.append(line());
+			ref.append(line("= Examples ="));
+			ref.append(line("Here are a few examples to get you started with Jstx."));
+			ref.append(line());
+			ref.append(line("# Print integers 1 through 10 each followed by a newline"));
+			ref.append(line("load 1"));
+			ref.append(line("load 10"));
+			ref.append(line("list.range"));
+			ref.append(line("iterate stack"));
+			ref.append(line("println"));
+			ref.append(line("end"));
+			ref.append(line("terminate"));
+			ref.append(line());
+			ref.append(line("I’ll add more examples eventually..."));
+			ref.append(line());
+			// Special opcodes
+			ref.append("  ____                  _       _     ___                      _            \n / ___| _ __   ___  ___(_) __ _| |   / _ \\ _ __   ___ ___   __| | ___  ___  \n \\___ \\| '_ \\ / _ \\/ __| |/ _` | |  | | | | '_ \\ / __/ _ \\ / _` |/ _ \\/ __| \n  ___) | |_) |  __/ (__| | (_| | |  | |_| | |_) | (_| (_) | (_| |  __/\\__ \\ \n |____/| .__/ \\___|\\___|_|\\__,_|_|   \\___/| .__/ \\___\\___/ \\__,_|\\___||___/ \n       |_|                                |_|                              \n");
+			String special = FlipTable.of(new String[] { "Opcode", "Description" }, new String[][] { { "load <literal>", "Push a literal value onto the stack." }, { "ldr <0x00 - 0xff>", "Push the value in this register." }, { "sdr <0x00 - 0xff>", "Store the top stack value in this register." } });
+			ref.append(special);
+			ref.append(line());
+			ref.append(line());
+			ref.append(line("= load ="));
+			ref.append(wrapLine("The load opcode takes all data on the line past the load statement as a literal value to be loaded onto the stack during program execution. The compiler will look at the data in your load statement and determine the optimal way to compress it for lowest byte count. Jstx has many ways of compressing different types of literals and this is done completely automatically. Note that comments are not supported on load lines, as the comment will also be taken as part of the literal value to load onto the stack. Since values in Jstx are untyped, they are all loaded in the same way. For example booleans are loaded as ‘load true’, or ‘load false’, integers are loaded as ‘load 100’, string as ‘loas abc’, etc..."));
+			ref.append(line());
+			ref.append(line("= srd & ldr ="));
+			ref.append(wrapLine("The set of 256 two byte addressable registers can be loaded from and saved to in the same way as the four one byte registers. For example ‘ldr 0x23’ loads register 0x23 and ‘sdr 0x23’ stores to register 0x23."));
+			ref.append(line());
 			// Opcode table
+			ref.append("   ___                      _            \n  / _ \\ _ __   ___ ___   __| | ___  ___  \n | | | | '_ \\ / __/ _ \\ / _` |/ _ \\/ __| \n | |_| | |_) | (_| (_) | (_| |  __/\\__ \\ \n  \\___/| .__/ \\___\\___/ \\__,_|\\___||___/ \n       |_|                              \n");
+			ref.append(line("I just started on this language a few weeks ago so there are hundreds if not thousands of opcodes yet to come."));
 			OpcodeComponent opcodeCompoent = DaggerJstxGWT_OpcodeComponent.create();
 			Opcodes opcodes = opcodeCompoent.getOpcodes();
 			Map<String, String> descriptions = new HashMap<>();
@@ -369,6 +437,40 @@ public class JstxGWT implements EntryPoint {
 	@Component(modules = { SystemModule.class, StandardModule.class })
 	protected static interface OpcodeComponent {
 		public Opcodes getOpcodes();
+	}
+
+	private static String wrapLine(String line) {
+		int lineLength = 100;
+		String linebreak = "\n";
+		if (line.length() == 0)
+			return linebreak;
+		if (line.length() <= lineLength)
+			return line + linebreak;
+		String[] words = line.split(" ");
+		StringBuilder allLines = new StringBuilder();
+		StringBuilder trimmedLine = new StringBuilder();
+		for (String word : words) {
+			if (trimmedLine.length() + 1 + word.length() <= lineLength) {
+				trimmedLine.append(word).append(" ");
+			} else {
+				allLines.append(trimmedLine).append(linebreak);
+				trimmedLine = new StringBuilder();
+				trimmedLine.append(word).append(" ");
+			}
+		}
+		if (trimmedLine.length() > 0) {
+			allLines.append(trimmedLine);
+		}
+		allLines.append(linebreak);
+		return allLines.toString() + "\n";
+	}
+
+	private static String line(String line) {
+		return line + "\n";
+	}
+
+	private static String line() {
+		return line("");
 	}
 
 	private static native void updateUrl(String newUrl)

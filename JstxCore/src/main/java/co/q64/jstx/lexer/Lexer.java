@@ -30,6 +30,7 @@ public class Lexer {
 
 	public List<Instruction> parse(String program, Output output) {
 		// Check for implied literal
+		/* TODO fix implied literal
 		for (char c : program.toCharArray()) {
 			if (String.valueOf(c).equals(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter())) {
 				break;
@@ -38,6 +39,7 @@ public class Lexer {
 				program = opcodes.getChars(OpcodeMarker.LITERAL).getCharacter() + program;
 			}
 		}
+		*/
 		boolean readingLiteral = false, smazSpecial = false;
 		int smazToRead = 0, baseToRead = 0, shortToRead = 0;
 		StringBuilder currentLiteral = null;
