@@ -27,10 +27,9 @@ import co.q64.jstx.lang.ProgramFactory;
 import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.Value;
 import co.q64.jstx.lexer.Lexer;
-import co.q64.jstx.runtime.ArgumentIterator;
-import co.q64.jstx.runtime.ArgumentIteratorFactory;
-import co.q64.jstx.runtime.MockOutput;
 import co.q64.jstx.runtime.Output;
+import co.q64.jstx.runtime.mock.MockOutput;
+import co.q64.jstx.util.ArgumentIterator;
 import dagger.Component;
 
 @Singleton
@@ -42,7 +41,7 @@ public class JstxMain {
 	protected @Inject Opcodes opcodes;
 	protected @Inject MockOutput mockOutput;
 	protected @Inject ProgramFactory programFactory;
-	protected @Inject ArgumentIteratorFactory arguments;
+	protected @Inject co.q64.jstx.util.ArgumentIteratorFactory arguments;
 	protected @Inject @Version String version;
 	protected @Inject @Name String name;
 	protected @Inject @Author String author;
@@ -175,7 +174,9 @@ public class JstxMain {
 	@Singleton
 	@GwtIncompatible(GWT.MESSAGE)
 	@Component(modules = { SystemModule.class, StandardModule.class })
-	protected static interface JstxMainComponent {
+	public static interface JstxMainComponent {
 		public void inject(JstxMain main);
+
+		public Jstx getJstx();
 	}
 }

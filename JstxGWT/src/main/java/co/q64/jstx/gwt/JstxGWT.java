@@ -11,8 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javax.inject.Singleton;
-
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.ScriptInjector;
@@ -25,34 +23,31 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import co.q64.jstx.DaggerJstxComponent;
 import co.q64.jstx.Jstx;
-import co.q64.jstx.JstxComponent;
 import co.q64.jstx.compiler.CompilerOutput;
-import co.q64.jstx.gwt.ace.AceEditor;
-import co.q64.jstx.gwt.ace.AceEditorTheme;
-import co.q64.jstx.gwt.resource.Resources;
-import co.q64.jstx.gwt.util.Base64;
-import co.q64.jstx.gwt.util.FlipTable;
-import co.q64.jstx.inject.StandardModule;
-import co.q64.jstx.inject.SystemModule;
+import co.q64.jstx.gwt.inject.DaggerJstxComponent;
+import co.q64.jstx.gwt.inject.JstxComponent;
+import co.q64.jstx.gwt.ui.ace.AceEditor;
+import co.q64.jstx.gwt.ui.ace.AceEditorTheme;
+import co.q64.jstx.gwt.ui.resource.Resources;
+import co.q64.jstx.gwt.ui.util.Base64;
+import co.q64.jstx.gwt.ui.util.FlipTable;
 import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.runtime.Output;
-import dagger.Component;
 
 public class JstxGWT implements EntryPoint {
 	private static final int buffer = 40;
 
 	public void onModuleLoad() {
 		Logger logger = Logger.getLogger("Jstx");
-		JstxComponent component = DaggerJstxComponent.builder().build();
+		JstxComponent component = DaggerJstxComponent.create();
 		Jstx jstx = component.getJstx();
 		String modeParam = Window.Location.getParameter("mode");
 		Mode mode = modeParam == null ? Mode.RUN : modeParam.equals("dev") ? Mode.DEV : modeParam.equals("ref") ? Mode.REF : Mode.RUN;
 
 		Resources res = GWT.create(Resources.class);
 		res.style().ensureInjected();
-		ScriptInjector.fromString(res.aceEditor().getText()).setWindow(ScriptInjector.TOP_WINDOW).setRemoveTag(false).inject();
+		ScriptInjector.fromString(res.aceEditor().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
 
 		Window.setTitle("Jstx GWT");
 		HTML forkMe = new HTML("<a href=\"https://github.com/Quantum64/Jstx\"><img style=\"position: absolute; top: 0; right: 0; border: 0;\" src=\"https://s3.amazonaws.com/github/ribbons/forkme_right_white_ffffff.png\" alt=\"Fork me on GitHub\"></a>");
@@ -408,8 +403,7 @@ public class JstxGWT implements EntryPoint {
 			// Opcode table
 			ref.append("   ___                      _            \n  / _ \\ _ __   ___ ___   __| | ___  ___  \n | | | | '_ \\ / __/ _ \\ / _` |/ _ \\/ __| \n | |_| | |_) | (_| (_) | (_| |  __/\\__ \\ \n  \\___/| .__/ \\___\\___/ \\__,_|\\___||___/ \n       |_|                              \n");
 			ref.append(line("I just started on this language a few weeks ago so there are hundreds if not thousands of opcodes yet to come."));
-			OpcodeComponent opcodeCompoent = DaggerJstxGWT_OpcodeComponent.create();
-			Opcodes opcodes = opcodeCompoent.getOpcodes();
+			Opcodes opcodes = component.getOpcodes();
 			Map<String, String> descriptions = new HashMap<>();
 			for (String s : opcodes.getNames()) {
 				if (s.startsWith("load") || s.startsWith("UNUSED") || s.startsWith("sdr 0x") || s.startsWith("ldr 0x")) {
@@ -431,12 +425,6 @@ public class JstxGWT implements EntryPoint {
 
 	private static enum Mode {
 		RUN, DEV, REF
-	}
-
-	@Singleton
-	@Component(modules = { SystemModule.class, StandardModule.class })
-	protected static interface OpcodeComponent {
-		public Opcodes getOpcodes();
 	}
 
 	private static String wrapLine(String line) {

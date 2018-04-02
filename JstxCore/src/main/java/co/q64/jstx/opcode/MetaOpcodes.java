@@ -9,7 +9,7 @@ import co.q64.jstx.compiler.Compiler;
 import co.q64.jstx.lang.opcode.OpcodeRegistry;
 import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lexer.Lexer;
-import co.q64.jstx.runtime.MockOutput;
+import co.q64.jstx.runtime.mock.MockOutput;
 import dagger.Lazy;
 
 public class MetaOpcodes implements OpcodeRegistry {

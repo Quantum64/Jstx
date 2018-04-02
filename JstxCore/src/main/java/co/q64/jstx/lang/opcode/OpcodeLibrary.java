@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.opcode.DictionaryOpcodes;
+import co.q64.jstx.opcode.GraphicsOpcodes;
 import co.q64.jstx.opcode.ListOpcodes;
 import co.q64.jstx.opcode.LongRegisterOpcodes;
 import co.q64.jstx.opcode.MathOpcodes;
@@ -25,10 +26,11 @@ public class OpcodeLibrary {
 	protected @Inject ListOpcodes list;
 	protected @Inject MathOpcodes math;
 	protected @Inject MetaOpcodes meta;
+	protected @Inject GraphicsOpcodes graphics;
 	protected @Inject LongRegisterOpcodes registry;
 	protected @Inject DictionaryOpcodes dictionary;
 
 	protected List<OpcodeRegistry> get() {
-		return Arrays.asList(standard, stack, string, math, list, meta, registry, dictionary);
+		return Arrays.asList(standard, stack, string, math, list, meta, graphics, registry, dictionary);
 	}
 }

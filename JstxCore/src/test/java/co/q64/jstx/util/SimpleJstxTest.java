@@ -6,12 +6,12 @@ import java.util.regex.Pattern;
 
 import org.junit.Assert;
 
-import co.q64.jstx.DaggerJstxComponent;
+import co.q64.jstx.DaggerJstxMain_JstxMainComponent;
 import co.q64.jstx.Jstx;
 import co.q64.jstx.compiler.CompilerOutput;
 
 public class SimpleJstxTest {
-	private Jstx jstx = DaggerJstxComponent.create().getJstx();
+	private Jstx jstx = DaggerJstxMain_JstxMainComponent.create().getJstx();
 	private String[] program;
 
 	public SimpleJstxTest(String... program) {

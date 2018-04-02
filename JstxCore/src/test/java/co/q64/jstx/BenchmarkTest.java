@@ -52,7 +52,7 @@ public class BenchmarkTest {
 
 	@Benchmark
 	public void benchmarkHelloWorld(Blackhole blackhole) {
-		Jstx jstx = DaggerJstxComponent.create().getJstx();
+		Jstx jstx = DaggerJstxMain_JstxMainComponent.create().getJstx();
 		CompilerOutput compiled = jstx.compileProgram(Arrays.asList("load Hello,", "load World!", "flatten soft"));
 		Assert.assertEquals(true, compiled.isSuccess());
 		jstx.runProgram(compiled.getProgram(), new String[0], new BlackholeOutput(blackhole));

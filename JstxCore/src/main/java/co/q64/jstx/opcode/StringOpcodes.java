@@ -95,6 +95,15 @@ public class StringOpcodes implements OpcodeRegistry {
 			stack.push(result.toString());
 		}, "Push the first stack value transformed to CamelCase.");
 
+		op.reg("string.sentenceCase", stack -> {
+			char[] chars = stack.pop().toString().toCharArray();
+			StringBuilder result = new StringBuilder();
+			for (int i = 0; i < chars.length; i++) {
+				result.append(i == 0 ? String.valueOf(chars[i]).toUpperCase() : String.valueOf(chars[i]).toLowerCase());
+			}
+			stack.push(result.toString());
+		});
+
 		op.reg("string.shiftChars", stack -> {
 			StringBuilder result = new StringBuilder();
 			int amount = stack.pop().asInt();

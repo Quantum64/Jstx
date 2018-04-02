@@ -68,7 +68,7 @@ public class Program {
 		this.iterators.clear();
 		this.jumps.clear();
 		if (args.length > 0) {
-			stack.push(literalFactory.create(Arrays.stream(args).map(s -> literalFactory.create(s)).collect(Collectors.toList())));
+			stack.push(literalFactory.create(Arrays.stream(args).collect(Collectors.joining(" "))));
 		}
 		while (full) {
 			if (terminated) {
