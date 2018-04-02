@@ -92,7 +92,7 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("exit", stack -> stack.getProgram().terminate(), "End program execution, then prints the top stack value followed by a newline.");
 		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint(), "Ends program execution.");
 		op.reg("restart", stack -> stack.getProgram().jumpToNode(1), "Jump to the first instruction in the program without pushing the call stack.");
-		op.reg("jump", stack -> stack.getProgram().jump(stack.pop().asInt()), "Jump to the first stack value interpreted as an instruction pointer OR jumps to the function declaration specified after this opcode, then Push the next instruction pointer to the call stack.");
+		op.reg("jump", stack -> stack.getProgram().jump(stack.pop().asInt()), "Push the next instruction pointer to the call stack then jump to the first stack value interpreted as an instruction pointer.");
 		op.reg("return", stack -> stack.getProgram().jumpReturn(), "Jump to the top instruction pointer on the call stack.");
 		op.reg("+", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.PLUS)), "Push the sum of the second and first stack values.");
 		op.reg("-", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MINUS)), "Push the difference of the second and first stack values.");
@@ -111,8 +111,8 @@ public class StandardOpcodes implements OpcodeRegistry {
 	}
 
 	private void conditional(Stack stack, BiFunction<Value, Value, Boolean> func) {
-		Value a = stack.pop();
 		Value b = stack.pop();
+		Value a = stack.pop();
 		Program p = stack.getProgram();
 		if (func.apply(a, b)) {
 			p.updateLastConditional(true);

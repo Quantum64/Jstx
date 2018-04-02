@@ -59,6 +59,22 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.digitSum", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).sum()), "Push the sum of the digits of the first stack value.");
 		oc.reg("math.castNines", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).filter(i -> i != 9).sum()), "Push the sum of the digits of the first stack value, casting out nines.");
 
+		oc.reg("math.isPrime", stack -> {
+			int n = stack.peek().asInt();
+			if (n > 2 && (n & 1) == 0) {
+				stack.push(false);
+				return;
+			}
+			for (int i = 3; i * i <= n; i += 2) {
+				if (n % i == 0) {
+					stack.push(false);
+					return;
+				}
+			}
+			stack.push(true);
+			return;
+		}, "Push true if the first stack value is prime, else false.");
+
 		oc.reg("math.fibonacci", stack -> {
 			int a = 0, b = 1, term = stack.pop().asInt();
 			while (a < term) {

@@ -35,5 +35,6 @@ public class DictionaryOpcodes implements OpcodeRegistry {
 			oc.reg("load " + " " + word, stack -> stack.push(" " + word));
 			oc.reg("load " + word.substring(0, 1).toUpperCase() + word.substring(1), stack -> stack.push(word.substring(0, 1).toUpperCase() + word.substring(1)));
 		}
+		oc.reg("yield ascii", stack -> stack.push(" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"), "Push the printable ASCII characters.");
 	}
 }

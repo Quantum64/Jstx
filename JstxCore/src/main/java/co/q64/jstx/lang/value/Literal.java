@@ -59,6 +59,22 @@ public class Literal implements Value {
 				return asBoolean() == value.asBoolean();
 			}
 		}
+		if (value.isBoolean() && isInteger()) {
+			switch (type) {
+			case EQUAL:
+				return value.asBoolean() == true ? asInt() != 0 : asInt() == 0;
+			default:
+				return false;
+			}
+		}
+		if (isBoolean() && value.isInteger()) {
+			switch (type) {
+			case EQUAL:
+				return asBoolean() == true ? value.asInt() != 0 : value.asInt() == 0;
+			default:
+				return false;
+			}
+		}
 		switch (type) {
 		case EQUAL:
 			return toString().equals(value.toString());

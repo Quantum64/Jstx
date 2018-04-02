@@ -1,6 +1,7 @@
 package co.q64.jstx.opcode;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -50,8 +51,12 @@ public class StringOpcodes implements OpcodeRegistry {
 		op.reg("string.reverse", stack -> stack.push(new StringBuilder(stack.pop().toString()).reverse()), "Push the first stack value with characters in reverse order.");
 		op.reg("string.reverseconcat", stack -> stack.push(stack.pop().toString().concat(stack.pop().toString())), "Push the first stack value concatenated with the second stack value.");
 		op.reg("string.charValue", stack -> stack.push(((int) stack.pop().asChar())), "Push the integer value of the first character of the first stack value.");
-		op.reg("string.deleteMatches", stack -> stack.push(stack.peek(2).toString().replaceAll(stack.pull(2).toString(), "")), "Push the third stack value with occurences of the second stack value interpreted as a regular expression removed.");
-		op.reg("string.snakeCase", stack -> stack.push(stack.pop().toString().toLowerCase().replace(" ", "_")), "Push the first stack value transformed to snake_case.");
+		op.reg("string.deleteMatches", stack -> stack.push(stack.peek(2).toString().replaceAll(stack.pull(2).toString(), "")), "Push the second stack value with occurences of the first stack value interpreted as a regular expression removed.");
+		op.reg("string.instancesOf", stack -> stack.push(stack.peek(2).toString().split(stack.pull(2).toString(), -1).length - 1));
+		op.reg("string.unique", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> (char) c).distinct().map(Object::toString).collect(Collectors.joining())), "Push the first stack value with duplicate characters removed.");
+		op.reg("string.repeat", stack -> stack.push(String.join("", Collections.nCopies(2, stack.pop().toString()))), "Push the first stack value repeated twice.");
+		op.reg("string.delete", stack -> stack.push(stack.peek(2).toString().replace(stack.pull(2).toString(), "")), "Push the second stack value with occurences of the first stack value removed.");
+		op.reg("string.blank", stack -> stack.push(stack.peek(2).toString().replace(stack.peek(1).toString(), Collections.nCopies(stack.pull(2).toString().length(), " ").stream().collect(Collectors.joining()))), "Push the second stack value with occurences of the first stack value replaced with whitespace.");
 
 		op.reg("string.deleteEnd", stack -> {
 			String target = stack.pop().toString();
@@ -98,5 +103,7 @@ public class StringOpcodes implements OpcodeRegistry {
 			}
 			stack.push(result);
 		}, "Push the second stack value with all characters arithmetically shifted by the first stack value.");
+
+		op.reg("string.snakeCase", stack -> stack.push(stack.pop().toString().toLowerCase().replace(" ", "_")), "Push the first stack value transformed to snake_case.");
 	}
 }
