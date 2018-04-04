@@ -10,6 +10,7 @@ import javax.inject.Singleton;
 
 import co.q64.jstx.lang.opcode.OpcodeRegistry;
 import co.q64.jstx.lang.opcode.Opcodes;
+import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
 import lombok.val;
@@ -19,6 +20,7 @@ public class ListOpcodes implements OpcodeRegistry {
 	protected @Inject ListOpcodes() {}
 
 	protected @Inject Null nul;
+	protected @Inject LiteralFactory literal;
 
 	@Override
 	public void register(Opcodes op) {
@@ -34,10 +36,10 @@ public class ListOpcodes implements OpcodeRegistry {
 			Collections.reverse(vals);
 			stack.push(vals.stream().map(Object::toString).collect(Collectors.joining(",")));
 		}, "Reverses the list in the first stack value.");
-		op.reg("list.range", stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(Object::toString).collect(Collectors.toList())), "Push a list of integers in the range of the second stack value to the first stack value.");
+		op.reg("list.range", stack -> stack.push(IntStream.rangeClosed(stack.peek(2).asInt(), stack.pull(2).asInt()).boxed().map(literal::create).collect(Collectors.toList())), "Push a list of integers in the range of the second stack value to the first stack value.");
 		op.reg("list.reverseRange", stack -> {
 			int to = stack.pop().asInt(), from = stack.pop().asInt();
-			stack.push(IntStream.rangeClosed(from, to).map(i -> to - i + from - 1).boxed().map(Object::toString).collect(Collectors.toList()));
+			stack.push(IntStream.rangeClosed(from, to).map(i -> to - i + from - 1).boxed().map(literal::create).collect(Collectors.toList()));
 		}, "Push a list of integers in decending order in the range of the second stack value to the first stack value.");
 		op.reg("list.set", stack -> {
 			int index = stack.pop().asInt();

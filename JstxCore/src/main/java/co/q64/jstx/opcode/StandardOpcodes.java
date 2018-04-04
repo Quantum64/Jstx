@@ -24,8 +24,8 @@ import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
-import co.q64.jstx.types.CompareType;
-import co.q64.jstx.types.OperateType;
+import co.q64.jstx.types.Comparison;
+import co.q64.jstx.types.Operation;
 
 @Singleton
 public class StandardOpcodes implements OpcodeRegistry {
@@ -54,14 +54,14 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("UNUSED literal compression mode 3", COMPRESSION3, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal begin 2 character", LITERAL1, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal begin 1 character", LITERAL2, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
-		op.reg("if =", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.EQUAL)), "Enter a conditional block if the top two stack values are equal.");
-		op.reg("if !=", CONDITIONAL, stack -> conditional(stack, (v, o) -> !v.compare(o, CompareType.EQUAL)), "Enter a conditional block if the top two stack values not equal.");
-		op.reg("if >", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.GREATER)), "Enter a conditional block if the second stack value is greater than the top stack value.");
-		op.reg("if >=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.GREATER) || v.compare(o, CompareType.EQUAL)), "Enter a conditional block if the second stack value is greater than or equal to the top stack value.");
-		op.reg("if <", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.LESS)), "Enter a conditional block if the second stack value is less than the top stack value.");
-		op.reg("if <=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, CompareType.LESS) || v.compare(o, CompareType.EQUAL)), "Enter a conditional block if the second stack value is less than or equal to the top stack value.");
-		op.reg("if true", CONDITIONAL, stack -> conditional(stack.push(true), (v, o) -> v.compare(o, CompareType.EQUAL)), "Enter a conditional block if first stack value exactly equals true.");
-		op.reg("if false", CONDITIONAL, stack -> conditional(stack.push(false), (v, o) -> v.compare(o, CompareType.EQUAL)), "Enter a conditional block if first stack value exactly equals false.");
+		op.reg("if =", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the top two stack values are equal.");
+		op.reg("if !=", CONDITIONAL, stack -> conditional(stack, (v, o) -> !v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the top two stack values not equal.");
+		op.reg("if >", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.GREATER)), "Enter a conditional block if the second stack value is greater than the top stack value.");
+		op.reg("if >=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.GREATER) || v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the second stack value is greater than or equal to the top stack value.");
+		op.reg("if <", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.LESS)), "Enter a conditional block if the second stack value is less than the top stack value.");
+		op.reg("if <=", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.LESS) || v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the second stack value is less than or equal to the top stack value.");
+		op.reg("if true", CONDITIONAL, stack -> conditional(stack.push(true), (v, o) -> v.compare(o, Comparison.EQUAL)), "Enter a conditional block if first stack value exactly equals true.");
+		op.reg("if false", CONDITIONAL, stack -> conditional(stack.push(false), (v, o) -> v.compare(o, Comparison.EQUAL)), "Enter a conditional block if first stack value exactly equals false.");
 		op.reg("load true", stack -> stack.push(true));
 		op.reg("load false", stack -> stack.push(false));
 		op.reg("load null", stack -> stack.push(nul));
@@ -90,14 +90,15 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("print space", stack -> stack.getProgram().getOutput().print(" "), "Print a space character.");
 		op.reg("println", stack -> stack.getProgram().getOutput().println(stack.pop().toString()), "Print the first stack value, then a newline.");
 		op.reg("exit", stack -> stack.getProgram().terminate(), "End program execution, then prints the top stack value followed by a newline.");
-		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint(), "Ends program execution.");
+		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint(), "End program execution.");
 		op.reg("restart", stack -> stack.getProgram().jumpToNode(1), "Jump to the first instruction in the program without pushing the call stack.");
 		op.reg("jump", stack -> stack.getProgram().jump(stack.pop().asInt()), "Push the next instruction pointer to the call stack then jump to the first stack value interpreted as an instruction pointer.");
 		op.reg("return", stack -> stack.getProgram().jumpReturn(), "Jump to the top instruction pointer on the call stack.");
-		op.reg("+", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.PLUS)), "Push the sum of the second and first stack values.");
-		op.reg("-", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MINUS)), "Push the difference of the second and first stack values.");
-		op.reg("*", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.MULTIPLY)), "Push the product of the second and first stack values.");
-		op.reg("/", stack -> stack.push(stack.peek(2).operate(stack.pull(2), OperateType.DIVIDE)), "Push the quotient of the second and first stack values.");
+		op.reg("str", stack -> stack.push(stack.pop().toString()), "Push the first stack value as a string.");
+		op.reg("+", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.ADD)), "Push the sum of the second and first stack values.");
+		op.reg("-", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.SUBTRACT)), "Push the difference of the second and first stack values.");
+		op.reg("*", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.MULTIPLY)), "Push the product of the second and first stack values.");
+		op.reg("/", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.DIVIDE)), "Push the quotient of the second and first stack values.");
 		op.reg("%", stack -> stack.push(stack.peek(2).asInt() % stack.pull(2).asInt()), "Push the modulus of the second and first stack values.");
 		// 0x37
 

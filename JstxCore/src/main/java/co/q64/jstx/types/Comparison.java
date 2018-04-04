@@ -1,5 +1,5 @@
 package co.q64.jstx.types;
 
-public enum CompareType {
+public enum Comparison {
 	EQUAL, GREATER, LESS;
 }

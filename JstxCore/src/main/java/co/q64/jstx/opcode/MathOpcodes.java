@@ -1,17 +1,36 @@
 package co.q64.jstx.opcode;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.lang.opcode.OpcodeRegistry;
 import co.q64.jstx.lang.opcode.Opcodes;
+import co.q64.jstx.lang.value.Literal;
+import co.q64.jstx.lang.value.LiteralFactory;
 
 @Singleton
 public class MathOpcodes implements OpcodeRegistry {
+	protected @Inject LiteralFactory literal;
+
 	protected @Inject MathOpcodes() {}
 
 	@Override
 	public void register(Opcodes oc) {
+		oc.reg("math.shiftRight", stack -> stack.push(stack.peek(2).asLong() >> stack.pull(2).asLong()), "Push the second stack value bitshifted right by the first stack value.");
+		oc.reg("math.shiftZeroRight", stack -> stack.push(stack.peek(2).asLong() >>> stack.pull(2).asLong()), "Push the second stack value bitshifted right and zero filled right by the first stack value.");
+		oc.reg("math.shiftLeft", stack -> stack.push(stack.peek(2).asLong() << stack.pull(2).asLong()), "Push the second stack value bitshifted left by the first stack value.");
+		oc.reg("math.shiftRightOne", stack -> stack.push(stack.pop().asLong() >> 1), "Push the second stack value bitshifted right by one.");
+		oc.reg("math.shiftZeroRightOne", stack -> stack.push(stack.pop().asLong() >>> 1), "Push the second stack value bitshifted right and zero filled right by one.");
+		oc.reg("math.shiftLeftOne", stack -> stack.push(stack.pop().asLong() << 1), "Push the second stack value bitshifted left by one.");
+		oc.reg("math.and", stack -> stack.push(stack.peek(2).asLong() & stack.pull(2).asLong()), "Push the bitwise and of the second and first stack values.");
+		oc.reg("math.or", stack -> stack.push(stack.peek(2).asLong() | stack.pull(2).asLong()), "Push the bitwise or of the second and first stack values.");
+		oc.reg("math.xor", stack -> stack.push(stack.peek(2).asLong() ^ stack.pull(2).asLong()), "Push the bitwise exclusive or of the second and first stack values.");
+		oc.reg("math.not", stack -> stack.push(~stack.pop().asLong()), "Push the bitwise not of the first stack value.");
+
 		oc.reg("math.e", stack -> stack.push(Math.E), "Push the number e where the n-th derivative of f(x)=e^x equals the function itself, Euler's number.");
 		oc.reg("math.pi", stack -> stack.push(Math.PI), "Push the ratio of the circumference of any circle to its diameter, the number Pi.");
 		oc.reg("math.tau", stack -> stack.push(Math.PI * 2), "Push the ratio of the circumference of any circle to its radius, the number Tau.");
@@ -58,30 +77,32 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.digitalRoot", stack -> stack.push(stack.pop().asInt() - (9 * Math.round(Math.floor((stack.peek().asInt() - 1) / 9f)))), "Push the digital root of the first stack value.");
 		oc.reg("math.digitSum", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).sum()), "Push the sum of the digits of the first stack value.");
 		oc.reg("math.castNines", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).filter(i -> i != 9).sum()), "Push the sum of the digits of the first stack value, casting out nines.");
+		oc.reg("math.fibonacci", stack -> stack.push(fibonacci(stack.pop().asInt())), "Push the fibonacci number indexed at the first stack value.");
+		oc.reg("math.fibonacciList", stack -> stack.push(IntStream.rangeClosed(1, stack.pop().asInt()).map(this::fibonacci).boxed().map(literal::create).collect(Collectors.toList())), "Push a list of fibonacci numbers of the length of the first stack value.");
+		oc.reg("math.isPrime", stack -> stack.push(prime(stack.pop().asInt())), "Push true if the first stack value is prime, else false.");
+		oc.reg("math.primeList", stack -> stack.push(IntStream.rangeClosed(2, stack.pop().asInt()).filter(this::prime).boxed().map(literal::create).collect(Collectors.toList())), "Push a list of primes that are less than or equal to the first stack value.");
+		oc.reg("math.isEvil", stack -> stack.push(stack.peek().isInteger() && stack.peek().asInt() > 1 && (Integer.toBinaryString(stack.pop().asInt()).split("1", -1).length - 1) % 2 == 0), "Push true if the top stack value is evil, else false.");
+	}
 
-		oc.reg("math.isPrime", stack -> {
-			int n = stack.peek().asInt();
-			if (n > 2 && (n & 1) == 0) {
-				stack.push(false);
-				return;
+	private boolean prime(int n) {
+		if (n > 2 && (n & 1) == 0) {
+			return false;
+		}
+		for (int i = 3; i * i <= n; i += 2) {
+			if (n % i == 0) {
+				return false;
 			}
-			for (int i = 3; i * i <= n; i += 2) {
-				if (n % i == 0) {
-					stack.push(false);
-					return;
-				}
-			}
-			stack.push(true);
-			return;
-		}, "Push true if the first stack value is prime, else false.");
+		}
+		return true;
+	}
 
-		oc.reg("math.fibonacci", stack -> {
-			int a = 0, b = 1, term = stack.pop().asInt();
-			while (a < term) {
-				a = a + b;
-				b = a - b;
-			}
-			stack.push(a);
-		}, "Push the fibonacci number indexed at the first stack value.");
+	private int fibonacci(int n) {
+		int c = 0;
+		for (int a = 0, b = 1, i = 0, term = n; i < term; i++) {
+			c = a + b;
+			a = b;
+			b = c;
+		}
+		return c;
 	}
 }

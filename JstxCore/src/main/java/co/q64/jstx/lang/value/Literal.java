@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import com.google.auto.factory.AutoFactory;
 
-import co.q64.jstx.types.CompareType;
-import co.q64.jstx.types.OperateType;
+import co.q64.jstx.types.Comparison;
+import co.q64.jstx.types.Operation;
 import lombok.EqualsAndHashCode;
 
 @AutoFactory
@@ -15,7 +15,7 @@ import lombok.EqualsAndHashCode;
 public class Literal implements Value {
 	private String literal;
 
-	protected Literal(String literal) {
+	private Literal(String literal) {
 		this.literal = literal;
 	}
 
@@ -24,11 +24,11 @@ public class Literal implements Value {
 	}
 
 	protected Literal(List<Object> list) {
-		this(list.stream().map(Object::toString).collect(Collectors.joining(",")));
+		this("[" + list.stream().map(Object::toString).collect(Collectors.joining(",")) + "]");
 	}
 
 	@Override
-	public boolean compare(Value value, CompareType type) {
+	public boolean compare(Value value, Comparison type) {
 		if (isFloat() && value.isFloat()) {
 			if (isInteger() && value.isInteger()) {
 				switch (type) {
@@ -94,22 +94,24 @@ public class Literal implements Value {
 	@Override
 	public List<Value> iterate() {
 		List<Value> result = new ArrayList<>();
-		List<String> elements = new ArrayList<>();
-		StringBuilder currentElement = new StringBuilder();
-		char[] chars = literal.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			if (String.valueOf(chars[i]).equals(",")) {
-				elements.add(currentElement.toString());
-				currentElement = new StringBuilder();
-				continue;
+		if (literal.startsWith("[") && literal.endsWith("]")) {
+			List<String> elements = new ArrayList<>();
+			StringBuilder currentElement = new StringBuilder();
+			char[] chars = literal.toCharArray();
+			for (int i = 1; i < chars.length - 1; i++) {
+				if (String.valueOf(chars[i]).equals(",")) {
+					elements.add(currentElement.toString());
+					currentElement = new StringBuilder();
+					continue;
+				}
+				currentElement.append(chars[i]);
 			}
-			currentElement.append(chars[i]);
-		}
-		if (elements.size() > 0) {
-			if (currentElement.length() > 0) {
-				elements.add(currentElement.toString());
+			if (elements.size() > 0) {
+				if (currentElement.length() > 0) {
+					elements.add(currentElement.toString());
+				}
+				return elements.stream().map(Literal::new).collect(Collectors.toList());
 			}
-			return elements.stream().map(Literal::new).collect(Collectors.toList());
 		}
 		if (isInteger()) {
 			for (long l = 0; l < asLong(); l++) {
@@ -124,28 +126,28 @@ public class Literal implements Value {
 	}
 
 	@Override
-	public Value operate(Value value, OperateType type) {
+	public Value operate(Value value, Operation type) {
 		if ((isInteger() || isFloat()) && (value.isInteger() || value.isFloat())) {
 			if (isInteger() && value.isInteger()) {
 				switch (type) {
 				case DIVIDE:
 					return new Literal(asLong() / value.asLong());
-				case MINUS:
+				case SUBTRACT:
 					return new Literal(asLong() - value.asLong());
 				case MULTIPLY:
 					return new Literal(asLong() * value.asLong());
-				case PLUS:
+				case ADD:
 					return new Literal(asLong() + value.asLong());
 				}
 			} else {
 				switch (type) {
 				case DIVIDE:
 					return new Literal(asDouble() / value.asDouble());
-				case MINUS:
+				case SUBTRACT:
 					return new Literal(asDouble() - value.asDouble());
 				case MULTIPLY:
 					return new Literal(asDouble() * value.asDouble());
-				case PLUS:
+				case ADD:
 					return new Literal(asDouble() + value.asDouble());
 				}
 			}
@@ -154,22 +156,22 @@ public class Literal implements Value {
 			switch (type) {
 			case DIVIDE:
 				return new Literal(asBoolean() == value.asBoolean());
-			case MINUS:
+			case SUBTRACT:
 				return new Literal(asBoolean() != value.asBoolean());
 			case MULTIPLY:
 				return new Literal(asBoolean() == value.asBoolean());
-			case PLUS:
+			case ADD:
 				return new Literal(asBoolean() == value.asBoolean());
 			}
 		}
 		switch (type) {
 		case DIVIDE:
 			return new Literal(toString() + value.toString());
-		case MINUS:
+		case SUBTRACT:
 			return new Literal(value.toString() + toString());
 		case MULTIPLY:
 			return new Literal(toString() + value.toString());
-		case PLUS:
+		case ADD:
 			return new Literal(toString() + value.toString());
 		}
 		return new Literal(toString() + value.toString());
@@ -184,7 +186,7 @@ public class Literal implements Value {
 	}
 
 	public boolean isBoolean() {
-		return literal.equalsIgnoreCase("true") || literal.equalsIgnoreCase("false");
+		return literal.equalsIgnoreCase("true") || literal.equalsIgnoreCase("false") || literal.equals("1") || literal.equals("0");
 	}
 
 	public boolean isFloat() {
@@ -233,10 +235,10 @@ public class Literal implements Value {
 
 	@Override
 	public boolean asBoolean() {
-		try {
-			return literal.equalsIgnoreCase("true");
-		} catch (Exception e) {}
-		return false;
+		if (literal.equals("1")) {
+			return true;
+		}
+		return literal.equalsIgnoreCase("true");
 	}
 
 	@Override

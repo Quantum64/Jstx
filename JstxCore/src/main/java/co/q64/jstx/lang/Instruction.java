@@ -48,4 +48,9 @@ public class Instruction {
 		}
 		return "nop";
 	}
+
+	@Override
+	public String toString() {
+		return getInstruction();
+	}
 }

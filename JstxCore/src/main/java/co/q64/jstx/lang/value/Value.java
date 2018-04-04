@@ -2,13 +2,13 @@ package co.q64.jstx.lang.value;
 
 import java.util.List;
 
-import co.q64.jstx.types.CompareType;
-import co.q64.jstx.types.OperateType;
+import co.q64.jstx.types.Comparison;
+import co.q64.jstx.types.Operation;
 
 public interface Value {
-	public boolean compare(Value value, CompareType type);
+	public boolean compare(Value value, Comparison type);
 
-	public Value operate(Value value, OperateType type);
+	public Value operate(Value value, Operation type);
 
 	public List<Value> iterate();
 

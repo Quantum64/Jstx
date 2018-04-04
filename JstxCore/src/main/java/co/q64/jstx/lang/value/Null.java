@@ -6,15 +6,15 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import co.q64.jstx.types.CompareType;
-import co.q64.jstx.types.OperateType;
+import co.q64.jstx.types.Comparison;
+import co.q64.jstx.types.Operation;
 
 @Singleton
 public class Null implements Value {
 	protected @Inject Null() {}
 
 	@Override
-	public boolean compare(Value value, CompareType type) {
+	public boolean compare(Value value, Comparison type) {
 		return false;
 	}
 
@@ -24,7 +24,7 @@ public class Null implements Value {
 	}
 
 	@Override
-	public Value operate(Value value, OperateType type) {
+	public Value operate(Value value, Operation type) {
 		return value;
 	}
 
