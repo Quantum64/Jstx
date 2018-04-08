@@ -30,12 +30,12 @@ public class MetaOpcodes implements OpcodeRegistry {
 		oc.reg("meta.lex", stack -> stack.push(lexer.get().parse(stack.pop().toString(), mock)), "Push a list of " + name + " instructions from the compiled program on the top of the stack.");
 		oc.reg("meta.crash", stack -> stack.getProgram().crash("Manually initiated crash"), "Crash the program.");
 		oc.reg("meta.crashMessage", stack -> stack.getProgram().crash(stack.pop().toString()), "Crash the program using the first stack value as the error message.");
-		oc.reg("meta.compilePrint", stack -> jstx.get().compileProgram(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.toList())).getDisplayOutput().forEach(stack.getProgram().getOutput()::println), "Compile a list of " + name + " instructions on the top of the stack and print the compiler output.");
+		oc.reg("meta.compilePrint", stack -> jstx.get().compileProgram(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.toList())).getDisplayOutput().forEach(stack.getProgram()::println), "Compile a list of " + name + " instructions on the top of the stack and print the compiler output.");
 		oc.reg("meta.exec", stack -> jstx.get().runProgram(stack.pop().toString(), new String[0], stack.getProgram().getOutput()), "Evaluate a " + name + " program on the top of the stack.");
 		oc.reg("meta.eval", stack -> {
 			CompilerOutput co = jstx.get().compileProgram(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.toList()));
 			if (!co.isSuccess()) {
-				co.getDisplayOutput().forEach(stack.getProgram().getOutput()::println);
+				co.getDisplayOutput().forEach(stack.getProgram()::println);
 				return;
 			}
 			jstx.get().runProgram(co.getProgram(), new String[0], stack.getProgram().getOutput());

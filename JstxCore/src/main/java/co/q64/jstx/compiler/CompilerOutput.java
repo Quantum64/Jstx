@@ -10,6 +10,9 @@ import com.google.auto.factory.Provided;
 import co.q64.jstx.annotation.Constants.Author;
 import co.q64.jstx.annotation.Constants.Name;
 import co.q64.jstx.annotation.Constants.Version;
+import co.q64.jstx.compression.Insanity;
+import co.q64.jstx.lang.opcode.Chars;
+import co.q64.jstx.lang.opcode.OpcodeMarker;
 import co.q64.jstx.lang.opcode.Opcodes;
 import lombok.Getter;
 
@@ -19,25 +22,27 @@ public class CompilerOutput {
 	private String version;
 	private String name;
 	private Opcodes opcodes;
+	private Insanity insanity;
 	private @Getter boolean success;
 	private @Getter String error;
 	private List<String> compiledLines, instructionLines;
 
-	protected CompilerOutput(String author, String name, String version, Opcodes opcodes) {
+	protected CompilerOutput(String author, String name, String version, Opcodes opcodes, Insanity insanity) {
 		this.author = author;
 		this.version = version;
 		this.name = name;
 		this.opcodes = opcodes;
+		this.insanity = insanity;
 	}
 
-	protected CompilerOutput(@Provided @Author String author, @Provided @Name String name, @Provided @Version String version, @Provided Opcodes opcodes, String error) {
-		this(author, name, version, opcodes);
+	protected CompilerOutput(@Provided @Author String author, @Provided @Name String name, @Provided @Version String version, @Provided Opcodes opcodes, @Provided Insanity insanity, String error) {
+		this(author, name, version, opcodes, insanity);
 		this.error = error;
 		this.success = false;
 	}
 
-	protected CompilerOutput(@Provided @Author String author, @Provided @Name String name, @Provided @Version String version, @Provided Opcodes opcodes, List<String> compiledLines, List<String> instructionLines) {
-		this(author, name, version, opcodes);
+	protected CompilerOutput(@Provided @Author String author, @Provided @Name String name, @Provided @Version String version, @Provided Opcodes opcodes, @Provided Insanity insanity, List<String> compiledLines, List<String> instructionLines) {
+		this(author, name, version, opcodes, insanity);
 		this.compiledLines = compiledLines;
 		this.instructionLines = instructionLines;
 		this.success = true;
@@ -97,6 +102,23 @@ public class CompilerOutput {
 					compiled = "<whitespace character>";
 				}
 				result.add(compiled + offset + " # " + description);
+			}
+			if (insanity.getCodepage().length > 0) {
+				String program = getProgram();
+				if (program.length() % 2 == 1) {
+					program += opcodes.getChars(OpcodeMarker.EXIT).getCharacter();
+				}
+				char[] chars = program.toCharArray();
+				StringBuilder compressed = new StringBuilder();
+				for (int i = 0; i < chars.length; i += 2) {
+					int point = ((Chars.fromCode(String.valueOf(chars[i])).getByte() & 0xff) << 8) | (Chars.fromCode(String.valueOf(chars[i + 1])).getByte() & 0xff);
+					compressed.append(Character.toChars(insanity.getCodepage()[point]));
+				}
+				if (compressed.length() > 0) {
+					result.add(new String());
+					result.add("With insanity compression (" + chars.length / 2 + " bytes)");
+					result.add(compressed.toString());
+				}
 			}
 		} else {
 			result.add(error);

@@ -10,7 +10,9 @@ import static co.q64.jstx.lang.opcode.OpcodeMarker.ENDIF;
 import static co.q64.jstx.lang.opcode.OpcodeMarker.LITERAL;
 import static co.q64.jstx.lang.opcode.OpcodeMarker.LITERAL1;
 import static co.q64.jstx.lang.opcode.OpcodeMarker.LITERAL2;
-import static co.q64.jstx.lang.opcode.OpcodeMarker.UNCOMPRESSED;
+import static co.q64.jstx.lang.opcode.OpcodeMarker.SPECIAL;
+import static co.q64.jstx.lang.opcode.OpcodeMarker.EXIT;
+import static co.q64.jstx.lang.opcode.OpcodeMarker.LZMA;
 
 import java.util.function.BiFunction;
 
@@ -48,12 +50,13 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("load 9", stack -> stack.push(literal.create("9")));
 		op.reg("endif", ENDIF, stack -> {}, "End a conditional block.");
 		op.reg("UNUSED literal begin", LITERAL, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
-		op.reg("UNUSED literal uncompressed", UNCOMPRESSED, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
+		op.reg("UNUSED literal special", SPECIAL, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal compression mode 1", COMPRESSION1, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal compression mode 2", COMPRESSION2, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal compression mode 3", COMPRESSION3, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal begin 2 character", LITERAL1, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("UNUSED literal begin 1 character", LITERAL2, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
+		op.reg("UNUSED literal LZMA", LZMA, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		op.reg("if =", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the top two stack values are equal.");
 		op.reg("if !=", CONDITIONAL, stack -> conditional(stack, (v, o) -> !v.compare(o, Comparison.EQUAL)), "Enter a conditional block if the top two stack values not equal.");
 		op.reg("if >", CONDITIONAL, stack -> conditional(stack, (v, o) -> v.compare(o, Comparison.GREATER)), "Enter a conditional block if the second stack value is greater than the top stack value.");
@@ -86,10 +89,10 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("iterate", stack -> stack.getProgram().iterate(false), "Enter an iteration block over the first stack value.");
 		op.reg("iterate stack", stack -> stack.getProgram().iterate(true), "Enter an iteration block over the first stack value and Push the iteration element register at the begining of each loop.");
 		op.reg("end", END, stack -> stack.getProgram().end(), "End an iteration block.");
-		op.reg("print", stack -> stack.getProgram().getOutput().print(stack.pop().toString()), "Print the first stack value.");
-		op.reg("print space", stack -> stack.getProgram().getOutput().print(" "), "Print a space character.");
-		op.reg("println", stack -> stack.getProgram().getOutput().println(stack.pop().toString()), "Print the first stack value, then a newline.");
-		op.reg("exit", stack -> stack.getProgram().terminate(), "End program execution, then prints the top stack value followed by a newline.");
+		op.reg("print", stack -> stack.getProgram().print(stack.pop().toString().replace("\\n", "\n")), "Print the first stack value.");
+		op.reg("print space", stack -> stack.getProgram().print(" "), "Print a space character.");
+		op.reg("println", stack -> stack.getProgram().println(stack.pop().toString().replace("\\n", "\n")), "Print the first stack value, then a newline.");
+		op.reg("exit", EXIT, stack -> stack.getProgram().terminate(), "End program execution, then prints the top stack value followed by a newline.");
 		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint(), "End program execution.");
 		op.reg("restart", stack -> stack.getProgram().jumpToNode(1), "Jump to the first instruction in the program without pushing the call stack.");
 		op.reg("jump", stack -> stack.getProgram().jump(stack.pop().asInt()), "Push the next instruction pointer to the call stack then jump to the first stack value interpreted as an instruction pointer.");

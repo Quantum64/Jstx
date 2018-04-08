@@ -26,7 +26,7 @@ public class Program {
 	private IteratorFactory iteratorFactory;
 	private LiteralFactory literalFactory;
 	private Opcodes opcodes;
-
+	
 	private @Getter Output output;
 	private @Getter List<Instruction> instructions;
 	private @Getter Stack stack;
@@ -204,5 +204,13 @@ public class Program {
 
 	public void updateLastConditional(boolean result) {
 		lastConditional = result;
+	}
+
+	public void print(String str) {
+		output.print(str.replace("\\n", "\n"));
+	}
+
+	public void println(String str) {
+		output.println(str.replace("\\n", "\n"));
 	}
 }

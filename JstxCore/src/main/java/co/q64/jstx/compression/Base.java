@@ -11,13 +11,6 @@ public class Base {
 
 	protected @Inject Base() {}
 
-	public static void main(String[] args) {
-		BigInteger bi = new BigInteger("100");
-		for (byte b : bi.toByteArray()) {
-			System.out.println(b);
-		}
-	}
-
 	public boolean canCompress(String string) {
 		for (char c : string.toCharArray()) {
 			if (codebook.indexOf(String.valueOf(c)) == -1) {

@@ -17,4 +17,8 @@ public class ByteBuffer {
 	public byte[] array() {
 		return internal;
 	}
+	
+	public int pointer() {
+		return pointer;
+	}
 }

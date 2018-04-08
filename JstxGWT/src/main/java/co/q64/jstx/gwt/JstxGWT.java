@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.ScriptInjector;
+import com.google.gwt.dom.client.StyleInjector;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
@@ -46,6 +47,15 @@ public class JstxGWT implements EntryPoint {
 		Mode mode = modeParam == null ? Mode.RUN : modeParam.equals("dev") ? Mode.DEV : modeParam.equals("ref") ? Mode.REF : Mode.RUN;
 
 		Resources res = GWT.create(Resources.class);
+		/*
+		logger.info(res.insanity().getText());
+		String cp = res.insanity().getText();
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < cp.length(); i++) {
+			result.append(res.insanity().getText().substring(i, i + 1));
+		}
+		logger.info(result.toString());
+		*/
 		res.style().ensureInjected();
 		ScriptInjector.fromString(res.aceEditor().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
 
@@ -94,7 +104,7 @@ public class JstxGWT implements EntryPoint {
 
 			AceEditor codeEditor = new AceEditor();
 			codeEditor.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			codeEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.5) + "px");
+			codeEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.7) + "px");
 			code.add(codeEditor);
 			codeEditor.startEditor();
 			codeEditor.setShowPrintMargin(false);
@@ -115,7 +125,7 @@ public class JstxGWT implements EntryPoint {
 
 			AceEditor compilerEditor = new AceEditor();
 			compilerEditor.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			compilerEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.5) + "px");
+			compilerEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.7) + "px");
 			compiler.add(compilerEditor);
 			compilerEditor.startEditor();
 			compilerEditor.setReadOnly(true);
@@ -139,7 +149,7 @@ public class JstxGWT implements EntryPoint {
 
 			AceEditor outputEditor = new AceEditor();
 			outputEditor.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 3.7) + "px");
+			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 5.7) + "px");
 			output.add(outputEditor);
 			outputEditor.startEditor();
 			outputEditor.setReadOnly(true);
@@ -256,7 +266,7 @@ public class JstxGWT implements EntryPoint {
 
 			AceEditor outputEditor = new AceEditor();
 			outputEditor.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 1.7) + "px");
+			outputEditor.setHeight(String.valueOf(Window.getClientHeight() / 2.1) + "px");
 			output.add(outputEditor);
 			outputEditor.startEditor();
 			outputEditor.setReadOnly(true);
@@ -322,9 +332,10 @@ public class JstxGWT implements EntryPoint {
 			break;
 		}
 		case REF: {
+			StyleInjector.inject("body {margin:0;}");
 			AceEditor refBox = new AceEditor();
-			refBox.setWidth((String.valueOf(Window.getClientWidth() - buffer)) + "px");
-			refBox.setHeight(String.valueOf(Window.getClientHeight() - buffer) + "px");
+			refBox.setWidth((String.valueOf(Window.getClientWidth())) + "px");
+			refBox.setHeight(String.valueOf(Window.getClientHeight()) + "px");
 			main.add(refBox);
 			refBox.startEditor();
 			refBox.setReadOnly(true);
@@ -333,7 +344,7 @@ public class JstxGWT implements EntryPoint {
 			StringBuilder ref = new StringBuilder();
 			// Header
 			ref.append("                                    ,----,               \n         ,---._                   ,/   .`|               \n       .-- -.' \\   .--.--.      ,`   .'  :,--,     ,--,  \n       |    |   : /  /    '.  ;    ;     /|'. \\   / .`|  \n       :    ;   ||  :  /`. /.'___,/    ,' ; \\ `\\ /' / ;  \n       :        |;  |  |--` |    :     |  `. \\  /  / .'  \n       |    :   :|  :  ;_   ;    |.';  ;   \\  \\/  / ./   \n       :          \\  \\    `.`----'  |  |    \\  \\.'  /    \n       |    ;   |  `----.   \\   '   :  ;     \\  ;  ;     \n   ___ l           __ \\  \\  |   |   |  '    / \\  \\  \\    \n /    /\\    J   : /  /`--'  /   '   :  |   ;  /\\  \\  \\   \n/  ../  `..-    ,'--'.     /    ;   |.'  ./__;  \\  ;  \\  \n\\    \\         ;   `--'---'     '---'    |   : / \\  \\  ; \n \\    \\      ,'                          ;   |/   \\  ' | \n  \"---....--'                            `---'     `--`  ");
-			ref.append("\n  _____                                               _                _____ _    _ _     _      \n |  __ \\                                             (_)              / ____| |  | (_)   | |     \n | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _  | |  __| |  | |_  __| | ___ \n |  ___/ '__/ _ \\ / _` | '__/ _` | '_ ` _ \\| '_ ` _ \\| | '_ \\ / _` | | | |_ | |  | | |/ _` |/ _ \n | |   | | | (_) | (_| | | | (_| | | | | | | | | | | | | | | | (_| | | |__| | |__| | | (_| |  __/\n |_|   |_|  \\___/ \\__, |_|  \\__,_|_| |_| |_|_| |_| |_|_|_| |_|\\__, |  \\_____|\\____/|_|\\__,_|\\___|\n                   __/ |                                       __/ |                             \n                  |___/                                       |___/                              \n");
+			ref.append("\n  _____                                               _                _____ _    _ _     _      \n |  __ \\                                             (_)              / ____| |  | (_)   | |     \n | |__) | __ ___   __ _ _ __ __ _ _ __ ___  _ __ ___  _ _ __   __ _  | |  __| |  | |_  __| | ___ \n |  ___/ '__/ _ \\ / _` | '__/ _` | '_ ` _ \\| '_ ` _ \\| | '_ \\ / _` | | | |_ | |  | | |/ _` |/ _ \\\n | |   | | | (_) | (_| | | | (_| | | | | | | | | | | | | | | | (_| | | |__| | |__| | | (_| |  __/\n |_|   |_|  \\___/ \\__, |_|  \\__,_|_| |_| |_|_| |_| |_|_|_| |_|\\__, |  \\_____|\\____/|_|\\__,_|\\___|\n                   __/ |                                       __/ |                             \n                  |___/                                       |___/                              \n");
 			// The Basics
 			ref.append("  _____ _             ____            _           \n |_   _| |__   ___   | __ )  __ _ ___(_) ___ ___  \n   | | | '_ \\ / _ \\  |  _ \\ / _` / __| |/ __/ __| \n   | | | | | |  __/  | |_) | (_| \\__ \\ | (__\\__ \\ \n   |_| |_| |_|\\___|  |____/ \\__,_|___/_|\\___|___/ \n");
 			ref.append(line("= Overview ="));

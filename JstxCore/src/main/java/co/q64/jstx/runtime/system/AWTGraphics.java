@@ -11,9 +11,14 @@ import co.q64.jstx.util.Color;
 @Singleton
 public class AWTGraphics implements Graphics {
 	protected @Inject AWTGraphics() {}
-	
+
 	@Override
 	public Value createImage(int x, int y, Color color) {
+		return null;
+	}
+
+	@Override
+	public Value createImage(String encoded) {
 		return null;
 	}
 
@@ -39,7 +44,7 @@ public class AWTGraphics implements Graphics {
 
 	@Override
 	public void drawText(Value image, String text, int x, int y, boolean fill) {
-		
+
 	}
 
 	@Override

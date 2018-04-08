@@ -4,6 +4,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.google.gwt.canvas.dom.client.Context2d;
+import com.google.gwt.dom.client.ImageElement;
+import com.google.gwt.user.client.ui.Image;
 
 import co.q64.jstx.gwt.lang.value.GWTImage;
 import co.q64.jstx.gwt.lang.value.GWTImageFactory;
@@ -25,6 +27,15 @@ public class GWTGraphics implements Graphics {
 		setColor(result, color);
 		drawRectangle(result, 0, 0, x, y, true);
 		setColor(result, colors.create(0, 0, 0));
+		return result;
+	}
+	
+	@Override
+	public Value createImage(String encoded) {
+		Image image = new Image();
+		image.setUrl(encoded);
+		GWTImage result = factory.create(image.getWidth(), image.getHeight());
+		result.context().drawImage(ImageElement.as(image.getElement()), 0, 0, image.getWidth(), image.getHeight());
 		return result;
 	}
 

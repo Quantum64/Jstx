@@ -1,6 +1,7 @@
 package co.q64.jstx.opcode;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -13,7 +14,6 @@ import co.q64.jstx.lang.opcode.Opcodes;
 import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
-import lombok.val;
 
 @Singleton
 public class ListOpcodes implements OpcodeRegistry {
@@ -21,6 +21,7 @@ public class ListOpcodes implements OpcodeRegistry {
 
 	protected @Inject Null nul;
 	protected @Inject LiteralFactory literal;
+	protected @Inject ValueSorter sorter;
 
 	@Override
 	public void register(Opcodes op) {
@@ -32,7 +33,7 @@ public class ListOpcodes implements OpcodeRegistry {
 		op.reg("list.size", stack -> stack.push(stack.pop().iterate().size()), "Push the size of the first stack value.");
 		op.reg("list.length", stack -> stack.push(stack.pop().iterate().stream().filter(o -> o != nul).count()), "Push the size of the first stack value, excluding null elements.");
 		op.reg("list.reverse", stack -> {
-			val vals = stack.pop().iterate();
+			List<Value> vals = stack.pop().iterate();
 			Collections.reverse(vals);
 			stack.push(vals.stream().map(Object::toString).collect(Collectors.joining(",")));
 		}, "Reverses the list in the first stack value.");
@@ -75,5 +76,34 @@ public class ListOpcodes implements OpcodeRegistry {
 			list.remove(stack.pull(2));
 			stack.push(list);
 		}, "Remove the first stack value from the list in the second stack value. Does not remove the list from the stack.");
+		op.reg("list.sort", stack -> {
+			List<Value> list = stack.pop().iterate();
+			Collections.sort(list, sorter);
+			stack.push(list);
+		}, "Push the first stack value sorted in ascending order.");
+		op.reg("list.reverseSort", stack -> {
+			List<Value> list = stack.pop().iterate();
+			Collections.sort(list, Collections.reverseOrder(sorter));
+			stack.push(list);
+		}, "Push the first stack value sorted in decending order.");
+	}
+
+	@Singleton
+	protected static class ValueSorter implements Comparator<Value> {
+		protected @Inject ValueSorter() {}
+		
+		@Override
+		public int compare(Value o1, Value o2) {
+			if (o1.isInteger() && o2.isInteger()) {
+				return Long.compare(o1.asLong(), o2.asLong());
+			}
+			if (o1.isFloat() && o2.isFloat()) {
+				return Double.compare(o1.asDouble(), o2.asDouble());
+			}
+			if (o1.isBoolean() && o2.isBoolean()) {
+				return Boolean.compare(o1.asBoolean(), o2.asBoolean());
+			}
+			return o1.toString().compareTo(o2.toString());
+		}
 	}
 }

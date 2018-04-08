@@ -1,6 +1,6 @@
 package co.q64.jstx.opcode;
 
-import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -9,12 +9,12 @@ import javax.inject.Singleton;
 
 import co.q64.jstx.lang.opcode.OpcodeRegistry;
 import co.q64.jstx.lang.opcode.Opcodes;
-import co.q64.jstx.lang.value.Literal;
 import co.q64.jstx.lang.value.LiteralFactory;
 
 @Singleton
 public class MathOpcodes implements OpcodeRegistry {
 	protected @Inject LiteralFactory literal;
+	private Random random = new Random();
 
 	protected @Inject MathOpcodes() {}
 
@@ -73,6 +73,18 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.toDegrees", stack -> stack.push(Math.toDegrees(stack.pop().asDouble())), "Push the degree value of the first stack value interpreted as radians.");
 		oc.reg("math.toRadians", stack -> stack.push(Math.toRadians(stack.pop().asDouble())), "Push the radian value of the first stack value interpreted as degrees.");
 
+		oc.reg("math.randInt", stack -> stack.push(random.nextInt()), "Push a random integer.");
+		oc.reg("math.randInt100", stack -> stack.push(random.nextInt(100)), "Push a random integer between 0 and 99.");
+		oc.reg("math.randInt2", stack -> stack.push(random.nextInt(2)), "Push a random integer than is either 0 or 1.");
+		oc.reg("math.randByte", stack -> stack.push(random.nextInt(256)), "Push a random unsigned byte.");
+		oc.reg("math.randBoolean", stack -> stack.push(random.nextBoolean()), "Push a random boolean.");
+		oc.reg("math.randLong", stack -> stack.push(random.nextLong()), "Push a random long integer (-2^63 to 2^63-1).");
+		oc.reg("math.randGaussian", stack -> stack.push(random.nextBoolean()), "Push a normally distributed floating point value around mean 0 and standard deviation 1.");
+		oc.reg("math.randTo", stack -> stack.push(random.nextInt(stack.pop().asInt())), "Push a random integer between 0 and one less than the first stack value.");
+		oc.reg("math.randRange", stack -> stack.push(random.nextInt(stack.pop().asInt() + 1) + stack.pop().asInt()), "Push a random integer between the second stack value and the first stack value.");
+		oc.reg("math.randBytes", stack -> stack.push(IntStream.range(0, 100).map(i -> random.nextInt(256)).boxed().collect(Collectors.toList())), "Push a list of 100 random unsigned bytes.");
+		oc.reg("math.randBytesTo", stack -> stack.push(IntStream.range(0, stack.pop().asInt()).map(i -> random.nextInt(256)).boxed().collect(Collectors.toList())), "Push a list of random unsigned bytes of the size of the first stack value.");
+
 		oc.reg("math.triangular", stack -> stack.push((stack.peek().asInt() * (stack.pop().asInt() + 1)) / 2), "Push the triangular sum of the first stack value.");
 		oc.reg("math.digitalRoot", stack -> stack.push(stack.pop().asInt() - (9 * Math.round(Math.floor((stack.peek().asInt() - 1) / 9f)))), "Push the digital root of the first stack value.");
 		oc.reg("math.digitSum", stack -> stack.push(stack.pop().toString().chars().mapToObj(c -> ((char) c)).map(Object::toString).mapToInt(Integer::parseInt).sum()), "Push the sum of the digits of the first stack value.");
@@ -82,6 +94,10 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.isPrime", stack -> stack.push(prime(stack.pop().asInt())), "Push true if the first stack value is prime, else false.");
 		oc.reg("math.primeList", stack -> stack.push(IntStream.rangeClosed(2, stack.pop().asInt()).filter(this::prime).boxed().map(literal::create).collect(Collectors.toList())), "Push a list of primes that are less than or equal to the first stack value.");
 		oc.reg("math.isEvil", stack -> stack.push(stack.peek().isInteger() && stack.peek().asInt() > 1 && (Integer.toBinaryString(stack.pop().asInt()).split("1", -1).length - 1) % 2 == 0), "Push true if the top stack value is evil, else false.");
+		oc.reg("math.isInteger", stack -> stack.push(stack.pop().isInteger()), "Push true if the first stack value is an integer, else false.");
+		oc.reg("math.isFloat", stack -> stack.push(stack.pop().isFloat()), "Push true if the first stack value is a floating point number, else false.");
+		oc.reg("math.asInteger", stack -> stack.push(stack.pop().asInt()), "Push the first stack value converted to an integer.");
+		oc.reg("math.asFloat", stack -> stack.push(stack.pop().asDouble()), "Push the first stack value converted to a floating point number.");
 	}
 
 	private boolean prime(int n) {

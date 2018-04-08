@@ -12,6 +12,10 @@ public class DictionaryOpcodes implements OpcodeRegistry {
 			// Common numeric yields
 			"123456789", "1234567890", "987654321", "0987654321", "10", "100", "1000", "10000", "1000000", "10000000", "100000000",
 
+			// Numbers
+			"10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+			"128", "256", "512", "1024", "2048", "4096",
+
 			// Other various yields
 			"qwerty", "qwertyuiop", "qwertyuiopasdfghjklzxcvbnm", "abcdefghijklmnopqrstuvwxyz",
 

@@ -1,6 +1,7 @@
 package co.q64.jstx.opcode;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -55,11 +56,25 @@ public class BigNumberOpcodes implements OpcodeRegistry {
 		oc.reg("bigint.xor", stack -> stack.push(bigIntValue(stack.peek(2)).xor(stack.pull(2))), "Push the bitwise exclusive or of the second and first stack values.");
 		oc.reg("bigint.shiftLeftOne", stack -> stack.push(bigIntFactory.create(bigInt(stack.pop()).shiftLeft(1))), "Push first stack value with the bits shifted left by one.");
 		oc.reg("bigint.shiftRightOne", stack -> stack.push(bigIntFactory.create(bigInt(stack.pop()).shiftRight(1))), "Push first stack value with its bits shifted right by one.");
-		
+
 		oc.reg("bigint.toByteArray", stack -> {
 			byte[] bytes = bigInt(stack.peek()).toByteArray();
 			stack.push(IntStream.range(0, bytes.length).mapToObj(i -> bytes[i]).map(literal::create).collect(Collectors.toList()));
 		}, "Push a list of bytes that make up the first stack value.");
+
+		oc.reg("bigint.toUnsignedByteArray", stack -> {
+			byte[] bytes = bigInt(stack.peek()).toByteArray();
+			stack.push(IntStream.range(0, bytes.length).mapToObj(i -> bytes[i] & 0xff).map(literal::create).collect(Collectors.toList()));
+		}, "Push a list of unsigned bytes that make up the first stack value.");
+
+		oc.reg("bigint.fromBytes", stack -> {
+			List<Byte> lst = stack.pop().iterate().stream().map(Value::asInt).map(i -> i.byteValue()).collect(Collectors.toList());
+			byte[] bytes = new byte[lst.size()];
+			for (int i = 0; i < bytes.length; i++) {
+				bytes[i] = lst.get(i);
+			}
+			stack.push(bigIntFactory.create(new BigInteger(bytes)));
+		}, "Push a BigInteger from a big-endian byte list on the first stack value.");
 	}
 
 	private BigInteger bigInt(Value value) {

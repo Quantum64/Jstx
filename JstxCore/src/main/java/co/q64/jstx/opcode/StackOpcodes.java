@@ -72,7 +72,7 @@ public class StackOpcodes implements OpcodeRegistry {
 		}, "Collapse all stack values into a string seperated by spaces, then Push that string.");
 
 		op.reg("stack.size", stack -> stack.push(stack.size()), "Push the number of values on the stack.");
-		op.reg("stack.print", stack -> stack.getStack().stream().forEach(v -> stack.getProgram().getOutput().println(v.toString())), "Print each value on the stack, followed by a newline. Does not remove values from the stack.");
+		op.reg("stack.print", stack -> stack.getStack().stream().forEach(v -> stack.getProgram().println(v.toString())), "Print each value on the stack, followed by a newline. Does not remove values from the stack.");
 		// @formatter:off
 	}
 }

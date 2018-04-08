@@ -1,13 +1,18 @@
 package co.q64.jstx.lexer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.compression.Base;
+import co.q64.jstx.compression.Insanity;
+import co.q64.jstx.compression.Lzma;
+import co.q64.jstx.compression.Shoco;
 import co.q64.jstx.compression.Smaz;
 import co.q64.jstx.lang.Instruction;
 import co.q64.jstx.lang.InstructionFactory;
@@ -26,22 +31,36 @@ public class Lexer {
 	protected @Inject LiteralFactory literalFactory;
 	protected @Inject Opcodes opcodes;
 	protected @Inject Smaz smaz;
+	protected @Inject Shoco shoco;
+	protected @Inject Insanity insanity;
 	protected @Inject Base base;
+	protected @Inject Lzma lzma;
 
 	public List<Instruction> parse(String program, Output output) {
-		// Check for implied literal
-		/* TODO fix implied literal
+		String codepage = Arrays.stream(Chars.values()).map(Chars::getCharacter).collect(Collectors.joining());
 		for (char c : program.toCharArray()) {
-			if (String.valueOf(c).equals(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter())) {
+			if (!codepage.contains(String.valueOf(c))) {
+				int[] ipage = insanity.getCodepage();
+				StringBuilder decoded = new StringBuilder();
+				for (int ch : insanity.codePoints(program).toArray()) {
+					int in = -1;
+					for (int i = 0; i < ipage.length; i++) {
+						if (ipage[i] == ch) {
+							in = i;
+						}
+					}
+					byte[] data = new byte[2];
+					data[0] = (byte) (in & 0xFF);
+					data[1] = (byte) ((in >> 8) & 0xFF);
+					decoded.append(Chars.fromByte(data[1]).getCharacter());
+					decoded.append(Chars.fromByte(data[0]).getCharacter());
+				}
+				program = decoded.toString();
 				break;
 			}
-			if (String.valueOf(c).equals(opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter())) {
-				program = opcodes.getChars(OpcodeMarker.LITERAL).getCharacter() + program;
-			}
 		}
-		*/
 		boolean readingLiteral = false, smazSpecial = false;
-		int smazToRead = 0, baseToRead = 0, shortToRead = 0;
+		int smazToRead = 0, baseToRead = 0, shortToRead = 0, specialToRead = 0, lzmaToRead = 0;
 		StringBuilder currentLiteral = null;
 		ByteBuffer currentBuffer = null;
 		String opcodeQueue = "";
@@ -51,7 +70,7 @@ public class Lexer {
 			String c = String.valueOf(chars[index]);
 			if (opcodeQueue.isEmpty()) {
 				if (shortToRead > 0) {
-					currentLiteral.append(c);
+					currentLiteral.append(Chars.fromInt(~Chars.fromCode(c).getId() & 0xff).getCharacter());
 					shortToRead--;
 					if (shortToRead == 0) {
 						instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
@@ -79,6 +98,15 @@ public class Lexer {
 					}
 					continue;
 				}
+				if (specialToRead > 0) {
+					currentBuffer.put(Chars.fromCode(c).getByte());
+					specialToRead--;
+					if (specialToRead == 0) {
+						String decomp = shoco.decompress(currentBuffer.array());
+						instructions.add(instructionFactory.create(literalFactory.create(decomp)));
+					}
+					continue;
+				}
 				if (baseToRead > 0) {
 					currentBuffer.put(Chars.fromCode(c).getByte());
 					baseToRead--;
@@ -87,7 +115,15 @@ public class Lexer {
 					}
 					continue;
 				}
-				if (readingLiteral && opcodes.getChars(OpcodeMarker.UNCOMPRESSED).getCharacter().equals(c)) {
+				if (lzmaToRead > 0) {
+					currentBuffer.put(Chars.fromCode(c).getByte());
+					lzmaToRead--;
+					if (lzmaToRead == 0) {
+						instructions.add(instructionFactory.create(literalFactory.create(lzma.decompress(currentBuffer.array()))));
+					}
+					continue;
+				}
+				if (readingLiteral && opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter().equals(c)) {
 					readingLiteral = false;
 					instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
 					continue;
@@ -123,6 +159,18 @@ public class Lexer {
 				if (opcodes.getChars(OpcodeMarker.LITERAL1).getCharacter().equals(c)) {
 					currentLiteral = new StringBuilder();
 					shortToRead = 1;
+					continue;
+				}
+				if (opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter().equals(c)) {
+					index++;
+					specialToRead = Chars.fromCode(String.valueOf(chars[index])).getId() + 1;
+					currentBuffer = new ByteBuffer(specialToRead);
+					continue;
+				}
+				if (opcodes.getChars(OpcodeMarker.LZMA).getCharacter().equals(c)) {
+					index++;
+					lzmaToRead = Chars.fromCode(String.valueOf(chars[index])).getId() + 1;
+					currentBuffer = new ByteBuffer(lzmaToRead);
 					continue;
 				}
 			}

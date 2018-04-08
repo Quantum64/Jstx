@@ -6,6 +6,8 @@ import co.q64.jstx.util.Color;
 public interface Graphics {
 	public Value createImage(int x, int y, Color color);
 
+	public Value createImage(String encoded);
+
 	public void setColor(Value image, Color color);
 
 	public void setStroke(Value image, int stroke);
