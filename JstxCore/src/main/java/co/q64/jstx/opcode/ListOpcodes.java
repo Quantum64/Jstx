@@ -1,5 +1,6 @@
 package co.q64.jstx.opcode;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -27,11 +28,15 @@ public class ListOpcodes implements OpcodeRegistry {
 	public void register(Opcodes op) {
 		op.reg("list.flatten", stack -> stack.push(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.joining())), "Push all elements from the first stack value as a string.");
 		op.reg("list.flattenSoft", stack -> stack.push(stack.pop().iterate().stream().map(Object::toString).collect(Collectors.joining(" "))), "Push all elements from the first stack value as a string seperated by a space.");
+		op.reg("list.singleton", stack -> stack.push(Arrays.asList(stack.pop())), "Push the first stack value as a list.");
+		op.reg("list.pair", stack -> stack.push(Arrays.asList(stack.peek(2), stack.pull(2))), "Push the second and first stack values as a list.");
+		op.reg("list.triad", stack -> stack.push(Arrays.asList(stack.peek(3), stack.peek(2), stack.pull(3))), "Push the third, second, and first stack values as a list.");
 		op.reg("list.join", stack -> stack.push(stack.peek(2).iterate().stream().map(Object::toString).collect(Collectors.joining(stack.pull(2).toString()))), "Push all elements from the second stack value as a string seperated by the first stack value.");
 		op.reg("list.unique", stack -> stack.push(stack.pop().iterate().stream().distinct().collect(Collectors.toList())), "Push the first stack value with duplicate elements removed.");
 		op.reg("list.explode", stack -> stack.pop().iterate().forEach(x -> stack.push(x)), "Push every value from the first stack value, interpreted as a list.");
 		op.reg("list.size", stack -> stack.push(stack.pop().iterate().size()), "Push the size of the first stack value.");
 		op.reg("list.length", stack -> stack.push(stack.pop().iterate().stream().filter(o -> o != nul).count()), "Push the size of the first stack value, excluding null elements.");
+		op.reg("list.of", stack -> stack.push(IntStream.range(0, stack.pop().asInt()).mapToObj(i -> stack.pop()).collect(Collectors.toList())), "Push stack values into a list of the size of the first stack value starting with the second stack value.");
 		op.reg("list.reverse", stack -> {
 			List<Value> vals = stack.pop().iterate();
 			Collections.reverse(vals);
@@ -91,7 +96,7 @@ public class ListOpcodes implements OpcodeRegistry {
 	@Singleton
 	protected static class ValueSorter implements Comparator<Value> {
 		protected @Inject ValueSorter() {}
-		
+
 		@Override
 		public int compare(Value o1, Value o2) {
 			if (o1.isInteger() && o2.isInteger()) {

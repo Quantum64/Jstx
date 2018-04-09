@@ -219,10 +219,13 @@ public class Compiler {
 			}
 			if (lzma.canCompress(load)) {
 				byte[] compressed = lzma.compress(load);
-				if (compressed.length <= load.length() && compressed.length <= 256 && compressed.length > 0) {
+				if (compressed.length <= load.length() && compressed.length > 0) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(opcodes.getChars(OpcodeMarker.LZMA).getCharacter());
-					sb.append(Chars.fromInt(compressed.length - 1).getCharacter());
+					sb.append(Chars.fromInt(compressed.length - 1 >= 255 ? 255 : compressed.length - 1).getCharacter());
+					if (compressed.length - 1 >= 255) {
+						sb.append(Chars.fromInt(compressed.length - 256).getCharacter());
+					}
 					for (byte b : compressed) {
 						sb.append(Chars.fromByte(b).getCharacter());
 					}
@@ -245,7 +248,7 @@ public class Compiler {
 					break;
 				}
 			}
-			if (load.contains(opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter()) || mustShoco) {
+			if (load.contains(Chars.fromInt(~opcodes.getChars(OpcodeMarker.SPECIAL).getId() & 0xff).getCharacter()) || mustShoco) {
 				if (shoco.canCompress(load)) {
 					byte[] compressed = shoco.compress(load);
 					if (compressed.length <= 256 && compressed.length > 0) {
@@ -257,10 +260,12 @@ public class Compiler {
 						return Optional.empty();
 					}
 				}
-				Optional.of(output.create("Failed to process literal. Line: " + (index + 1)));
+				return Optional.of(output.create("Failed to process literal. Line: " + (index + 1)));
 			}
 			result.append(opcodes.getChars(OpcodeMarker.LITERAL).getCharacter());
-			result.append(load);
+			for (char c : load.toCharArray()) {
+				result.append(Chars.fromInt(~Chars.fromCode(String.valueOf(c)).getId() & 0xff).getCharacter());
+			}
 			result.append(opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter());
 			return Optional.empty();
 		}

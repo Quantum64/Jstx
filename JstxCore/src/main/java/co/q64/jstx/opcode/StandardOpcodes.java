@@ -87,7 +87,7 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("sdr c", stack -> stack.getProgram().getRegisters().setC(stack.pop()), "Store the first stack value in the c register.");
 		op.reg("sdr d", stack -> stack.getProgram().getRegisters().setD(stack.pop()), "Store the first stack value in the d register.");
 		op.reg("iterate", stack -> stack.getProgram().iterate(false), "Enter an iteration block over the first stack value.");
-		op.reg("iterate stack", stack -> stack.getProgram().iterate(true), "Enter an iteration block over the first stack value and Push the iteration element register at the begining of each loop.");
+		op.reg("iterate stack", stack -> stack.getProgram().iterate(true), "Enter an iteration block over the first stack value and push the iteration element register at the begining of each loop.");
 		op.reg("end", END, stack -> stack.getProgram().end(), "End an iteration block.");
 		op.reg("print", stack -> stack.getProgram().print(stack.pop().toString().replace("\\n", "\n")), "Print the first stack value.");
 		op.reg("print space", stack -> stack.getProgram().print(" "), "Print a space character.");

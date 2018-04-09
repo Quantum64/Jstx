@@ -1,6 +1,7 @@
 package co.q64.jstx.lang.value;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -112,6 +113,7 @@ public class Literal implements Value {
 				}
 				return elements.stream().map(Literal::new).collect(Collectors.toList());
 			}
+			return Arrays.asList(new Literal(currentElement.toString()));
 		}
 		if (isInteger()) {
 			for (long l = 0; l < asLong(); l++) {

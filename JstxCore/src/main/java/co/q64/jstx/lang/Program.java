@@ -26,7 +26,7 @@ public class Program {
 	private IteratorFactory iteratorFactory;
 	private LiteralFactory literalFactory;
 	private Opcodes opcodes;
-	
+
 	private @Getter Output output;
 	private @Getter List<Instruction> instructions;
 	private @Getter Stack stack;
@@ -84,7 +84,7 @@ public class Program {
 			step();
 		}
 		if (printOnTerminate) {
-			output.println(stack.pop().toString());
+			println(stack.pop().toString());
 		}
 	}
 
@@ -212,5 +212,12 @@ public class Program {
 
 	public void println(String str) {
 		output.println(str.replace("\\n", "\n"));
+	}
+
+	public String getArg(int index) {
+		if (args.length <= index) {
+			return "";
+		}
+		return args[index] == null ? "" : args[index];
 	}
 }

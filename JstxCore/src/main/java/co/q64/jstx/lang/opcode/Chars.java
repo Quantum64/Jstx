@@ -1,12 +1,5 @@
 package co.q64.jstx.lang.opcode;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
-import co.q64.jstx.compression.lzma.LZMAByteArrayCompressorFactory;
-import co.q64.jstx.compression.lzma.LZMAByteArrayDecompressorFactory;
-import co.q64.jstx.compression.lzma.UTF8;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -300,28 +293,5 @@ public enum Chars {
 
 	public byte getByte() {
 		return (byte) (id - 128);
-	}
-
-	public static void main(String[] args) {
-		System.out.println("☯".length());
-		String str = "+----------+----------+----------+\\n|a.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|b.exe 10% |#         |leeching  |\\n+----------+----------+----------+\\n|c.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|d.exe 20% |##        |leeching  |\\n+----------+----------+----------+\\n|e.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|f.exe 30% |###       |leeching  |\\n+----------+----------+----------+\\n|g.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|h.exe 40% |####      |leeching  |\\n+----------+----------+----------+\\n|i.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|j.exe 50% |#####     |leeching  |\\n+----------+----------+----------+\\n|k.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|l.exe 60% |######    |leeching  |\\n+----------+----------+----------+\\n|m.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|n.exe 70% |#######   |leeching  |\\n+----------+----------+----------+\\n|o.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|p.exe 80% |########  |leeching  |\\n+----------+----------+----------+\\n|q.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|r.exe 90% |######### |leeching  |\\n+----------+----------+----------+\\n|s.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|t.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|u.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|v.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|w.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|x.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|y.exe     |##########|seeding   |\\n+----------+----------+----------+\\n|z.exe     |##########|seeding   |\\n+----------+----------+----------+";
-
-		StringBuilder comp = new StringBuilder();
-		byte[] compressed = new LZMAByteArrayCompressorFactory().create(UTF8.encode(str)).getCompressedData();
-		for (byte b : compressed) {
-			comp.append(fromByte(b).getCharacter());
-		}
-		System.out.println(comp);
-
-		byte[] data = new byte[comp.length()];
-		char[] chars = comp.toString().toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			data[i] = fromCode(String.valueOf(chars[i])).getByte();
-		}
-		byte[] decoded = new LZMAByteArrayDecompressorFactory().create(data).getUncompressedData();
-		System.out.println(IntStream.range(0, compressed.length).mapToObj(i -> compressed[i]).map(Object::toString).collect(Collectors.joining(",")));
-		System.out.println(IntStream.range(0, data.length).mapToObj(i -> data[i]).map(Object::toString).collect(Collectors.joining(",")));
-		System.out.println(UTF8.decode(decoded));
-		//System.out.println(UTF8.decode(new LZMAByteArrayDecompressorFactory().create(new LZMAByteArrayCompressorFactory().create(UTF8.encode(str)).getCompressedData()).getUncompressedData()));
 	}
 }

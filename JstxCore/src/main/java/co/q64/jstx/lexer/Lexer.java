@@ -125,7 +125,11 @@ public class Lexer {
 				}
 				if (readingLiteral && opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter().equals(c)) {
 					readingLiteral = false;
-					instructions.add(instructionFactory.create(literalFactory.create(currentLiteral.toString())));
+					StringBuilder literal = new StringBuilder();
+					for (char ch : currentLiteral.toString().toCharArray()) {
+						literal.append(Chars.fromInt(~Chars.fromCode(String.valueOf(ch)).getId() & 0xff).getCharacter());
+					}
+					instructions.add(instructionFactory.create(literalFactory.create(literal.toString())));
 					continue;
 				}
 				if (readingLiteral) {
@@ -170,6 +174,10 @@ public class Lexer {
 				if (opcodes.getChars(OpcodeMarker.LZMA).getCharacter().equals(c)) {
 					index++;
 					lzmaToRead = Chars.fromCode(String.valueOf(chars[index])).getId() + 1;
+					if (lzmaToRead == 256) {
+						index++;
+						lzmaToRead += Chars.fromCode(String.valueOf(chars[index])).getId();
+					}
 					currentBuffer = new ByteBuffer(lzmaToRead);
 					continue;
 				}

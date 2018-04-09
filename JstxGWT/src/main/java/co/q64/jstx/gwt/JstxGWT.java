@@ -47,15 +47,6 @@ public class JstxGWT implements EntryPoint {
 		Mode mode = modeParam == null ? Mode.RUN : modeParam.equals("dev") ? Mode.DEV : modeParam.equals("ref") ? Mode.REF : Mode.RUN;
 
 		Resources res = GWT.create(Resources.class);
-		/*
-		logger.info(res.insanity().getText());
-		String cp = res.insanity().getText();
-		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < cp.length(); i++) {
-			result.append(res.insanity().getText().substring(i, i + 1));
-		}
-		logger.info(result.toString());
-		*/
 		res.style().ensureInjected();
 		ScriptInjector.fromString(res.aceEditor().getText()).setWindow(ScriptInjector.TOP_WINDOW).inject();
 
