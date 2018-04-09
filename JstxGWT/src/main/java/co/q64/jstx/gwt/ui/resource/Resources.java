@@ -8,9 +8,6 @@ public interface Resources extends ClientBundle {
 	@Source("AceEditor.js")
 	public TextResource aceEditor();
 
-	@Source("Insanity.dat")
-	public TextResource insanity();
-
 	@Source("JstxStyle.css")
 	@CssResource.NotStrict
 	public CssResource style();

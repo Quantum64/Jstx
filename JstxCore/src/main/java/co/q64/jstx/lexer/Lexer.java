@@ -40,15 +40,9 @@ public class Lexer {
 		String codepage = Arrays.stream(Chars.values()).map(Chars::getCharacter).collect(Collectors.joining());
 		for (char c : program.toCharArray()) {
 			if (!codepage.contains(String.valueOf(c))) {
-				int[] ipage = insanity.getCodepage();
 				StringBuilder decoded = new StringBuilder();
 				for (int ch : insanity.codePoints(program).toArray()) {
-					int in = -1;
-					for (int i = 0; i < ipage.length; i++) {
-						if (ipage[i] == ch) {
-							in = i;
-						}
-					}
+					int in = insanity.getIndex(ch);
 					byte[] data = new byte[2];
 					data[0] = (byte) (in & 0xFF);
 					data[1] = (byte) ((in >> 8) & 0xFF);

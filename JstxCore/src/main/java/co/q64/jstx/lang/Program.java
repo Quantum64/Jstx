@@ -97,7 +97,7 @@ public class Program {
 		try {
 			current.execute(stack);
 		} catch (Exception e) {
-			crash(e.getClass().getSimpleName() + ": " + e.getMessage());
+			crash(e.getClass().getSimpleName() + ": " + e.getMessage() + " [Instruction: " + current.getInstruction() + ", Line: " + (instruction - 1) + "]");
 		}
 	}
 

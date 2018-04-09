@@ -103,22 +103,20 @@ public class CompilerOutput {
 				}
 				result.add(compiled + offset + " # " + description);
 			}
-			if (insanity.getCodepage().length > 0) {
-				String program = getProgram();
-				if (program.length() % 2 == 1) {
-					program += opcodes.getChars(OpcodeMarker.EXIT).getCharacter();
-				}
-				char[] chars = program.toCharArray();
-				StringBuilder compressed = new StringBuilder();
-				for (int i = 0; i < chars.length; i += 2) {
-					int point = ((Chars.fromCode(String.valueOf(chars[i])).getByte() & 0xff) << 8) | (Chars.fromCode(String.valueOf(chars[i + 1])).getByte() & 0xff);
-					compressed.append(Character.toChars(insanity.getCodepage()[point]));
-				}
-				if (compressed.length() > 0) {
-					result.add(new String());
-					result.add("With insanity compression (" + chars.length / 2 + " bytes)");
-					result.add(compressed.toString());
-				}
+			String program = getProgram();
+			if (program.length() % 2 == 1) {
+				program += opcodes.getChars(OpcodeMarker.EXIT).getCharacter();
+			}
+			char[] chars = program.toCharArray();
+			StringBuilder compressed = new StringBuilder();
+			for (int i = 0; i < chars.length; i += 2) {
+				int point = ((Chars.fromCode(String.valueOf(chars[i])).getByte() & 0xff) << 8) | (Chars.fromCode(String.valueOf(chars[i + 1])).getByte() & 0xff);
+				compressed.append(insanity.getCharacter(point));
+			}
+			if (compressed.length() > 0) {
+				result.add(new String());
+				result.add("With insanity compression (" + chars.length / 2 + " bytes)");
+				result.add(compressed.toString());
 			}
 		} else {
 			result.add(error);

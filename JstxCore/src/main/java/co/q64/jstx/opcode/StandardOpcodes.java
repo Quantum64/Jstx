@@ -89,9 +89,9 @@ public class StandardOpcodes implements OpcodeRegistry {
 		op.reg("iterate", stack -> stack.getProgram().iterate(false), "Enter an iteration block over the first stack value.");
 		op.reg("iterate stack", stack -> stack.getProgram().iterate(true), "Enter an iteration block over the first stack value and push the iteration element register at the begining of each loop.");
 		op.reg("end", END, stack -> stack.getProgram().end(), "End an iteration block.");
-		op.reg("print", stack -> stack.getProgram().print(stack.pop().toString().replace("\\n", "\n")), "Print the first stack value.");
+		op.reg("print", stack -> stack.getProgram().print(stack.pop().toString()), "Print the first stack value.");
 		op.reg("print space", stack -> stack.getProgram().print(" "), "Print a space character.");
-		op.reg("println", stack -> stack.getProgram().println(stack.pop().toString().replace("\\n", "\n")), "Print the first stack value, then a newline.");
+		op.reg("println", stack -> stack.getProgram().println(stack.pop().toString()), "Print the first stack value, then a newline.");
 		op.reg("exit", EXIT, stack -> stack.getProgram().terminate(), "End program execution, then prints the top stack value followed by a newline.");
 		op.reg("terminate", stack -> stack.getProgram().terminateNoPrint(), "End program execution.");
 		op.reg("restart", stack -> stack.getProgram().jumpToNode(1), "Jump to the first instruction in the program without pushing the call stack.");

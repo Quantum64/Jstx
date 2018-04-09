@@ -37,6 +37,7 @@ public class ListOpcodes implements OpcodeRegistry {
 		op.reg("list.size", stack -> stack.push(stack.pop().iterate().size()), "Push the size of the first stack value.");
 		op.reg("list.length", stack -> stack.push(stack.pop().iterate().stream().filter(o -> o != nul).count()), "Push the size of the first stack value, excluding null elements.");
 		op.reg("list.of", stack -> stack.push(IntStream.range(0, stack.pop().asInt()).mapToObj(i -> stack.pop()).collect(Collectors.toList())), "Push stack values into a list of the size of the first stack value starting with the second stack value.");
+		op.reg("list.empty", stack -> stack.push(Collections.emptyList()), "Push an empty list.");
 		op.reg("list.reverse", stack -> {
 			List<Value> vals = stack.pop().iterate();
 			Collections.reverse(vals);
@@ -91,6 +92,11 @@ public class ListOpcodes implements OpcodeRegistry {
 			Collections.sort(list, Collections.reverseOrder(sorter));
 			stack.push(list);
 		}, "Push the first stack value sorted in decending order.");
+		op.reg("list.shuffle", stack -> {
+			List<Value> list = stack.pop().iterate();
+			Collections.shuffle(list);
+			stack.push(list);
+		}, "Push the list on the first stack value with elements in random order.");
 	}
 
 	@Singleton

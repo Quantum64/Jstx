@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import co.q64.jstx.opcode.BigNumberOpcodes;
 import co.q64.jstx.opcode.DictionaryOpcodes;
 import co.q64.jstx.opcode.GraphicsOpcodes;
+import co.q64.jstx.opcode.IntegerOpcodes;
 import co.q64.jstx.opcode.ListOpcodes;
 import co.q64.jstx.opcode.LongRegisterOpcodes;
 import co.q64.jstx.opcode.MathOpcodes;
@@ -26,6 +27,7 @@ public class OpcodeLibrary {
 	protected @Inject StringOpcodes string;
 	protected @Inject ListOpcodes list;
 	protected @Inject MathOpcodes math;
+	protected @Inject IntegerOpcodes integer;
 	protected @Inject MetaOpcodes meta;
 	protected @Inject GraphicsOpcodes graphics;
 	protected @Inject BigNumberOpcodes bigNumber;
@@ -33,6 +35,6 @@ public class OpcodeLibrary {
 	protected @Inject DictionaryOpcodes dictionary;
 
 	protected List<OpcodeRegistry> get() {
-		return Arrays.asList(standard, stack, string, math, list, meta, graphics, bigNumber, registry, dictionary);
+		return Arrays.asList(standard, stack, string, math, integer, list, meta, graphics, bigNumber, registry, dictionary);
 	}
 }

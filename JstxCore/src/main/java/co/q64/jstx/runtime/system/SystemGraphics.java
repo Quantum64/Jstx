@@ -3,14 +3,18 @@ package co.q64.jstx.runtime.system;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.annotations.GwtIncompatible;
+
+import co.q64.jstx.annotation.GWT;
 import co.q64.jstx.lang.value.Value;
 import co.q64.jstx.runtime.Graphics;
 import co.q64.jstx.util.Color;
 
 // TODO maybe some day...
 @Singleton
-public class AWTGraphics implements Graphics {
-	protected @Inject AWTGraphics() {}
+@GwtIncompatible(GWT.MESSAGE)
+public class SystemGraphics implements Graphics {
+	protected @Inject SystemGraphics() {}
 
 	@Override
 	public Value createImage(int x, int y, Color color) {

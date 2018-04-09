@@ -98,6 +98,8 @@ public class MathOpcodes implements OpcodeRegistry {
 		oc.reg("math.isFloat", stack -> stack.push(stack.pop().isFloat()), "Push true if the first stack value is a floating point number, else false.");
 		oc.reg("math.asInteger", stack -> stack.push(stack.pop().asInt()), "Push the first stack value converted to an integer.");
 		oc.reg("math.asFloat", stack -> stack.push(stack.pop().asDouble()), "Push the first stack value converted to a floating point number.");
+		oc.reg("math.incrementDigits", stack -> stack.push(stack.pop().toString().chars().map(i -> Integer.parseInt(Character.valueOf((char) i).toString()) + 1).mapToObj(String::valueOf).collect(Collectors.joining())), "Push the first stack value with digits incremented by 1.");
+		oc.reg("math.decrementDigits", stack -> stack.push(stack.pop().toString().chars().map(i -> Integer.parseInt(Character.valueOf((char) i).toString()) - 1).mapToObj(String::valueOf).collect(Collectors.joining())), "Push the first stack value with digits decremented by 1.");
 	}
 
 	private boolean prime(int n) {
