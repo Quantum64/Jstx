@@ -30,7 +30,6 @@ import co.q64.jstx.lang.Stack;
 import co.q64.jstx.lang.opcode.OpcodeCache;
 import co.q64.jstx.lang.opcode.OpcodeMarker;
 import co.q64.jstx.lang.opcode.OpcodeRegistry;
-import co.q64.jstx.lang.value.LiteralFactory;
 import co.q64.jstx.lang.value.Null;
 import co.q64.jstx.lang.value.Value;
 import co.q64.jstx.types.Comparison;
@@ -42,22 +41,21 @@ public class StandardOpcodes extends OpcodeRegistry {
 		super(STANDARD);
 	}
 
-	protected @Inject LiteralFactory literal;
 	protected @Inject Null nul;
 	protected @Inject OpcodeCache cache;
 
 	@Override
 	public void register() {
-		r("load 0", stack -> stack.push(literal.create("0")));
-		r("load 1", stack -> stack.push(literal.create("1")));
-		r("load 2", stack -> stack.push(literal.create("2")));
-		r("load 3", stack -> stack.push(literal.create("3")));
-		r("load 4", stack -> stack.push(literal.create("4")));
-		r("load 5", stack -> stack.push(literal.create("5")));
-		r("load 6", stack -> stack.push(literal.create("6")));
-		r("load 7", stack -> stack.push(literal.create("7")));
-		r("load 8", stack -> stack.push(literal.create("8")));
-		r("load 9", stack -> stack.push(literal.create("9")));
+		r("load 0", stack -> stack.push(0));
+		r("load 1", stack -> stack.push(1));
+		r("load 2", stack -> stack.push(2));
+		r("load 3", stack -> stack.push(3));
+		r("load 4", stack -> stack.push(4));
+		r("load 5", stack -> stack.push(5));
+		r("load 6", stack -> stack.push(6));
+		r("load 7", stack -> stack.push(7));
+		r("load 8", stack -> stack.push(8));
+		r("load 9", stack -> stack.push(9));
 		r("endif", ENDIF, stack -> {}, "End a conditional block.");
 		r("UNUSED literal begin", LITERAL, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
 		r("UNUSED literal special", SPECIAL, stack -> stack.getProgram().crash("The interpreter attempted to execute an unused literal opcode!"));
@@ -83,6 +81,9 @@ public class StandardOpcodes extends OpcodeRegistry {
 		r("pop 2", stack -> stack.pop(2), "Remove the first two stack values from the stack.");
 		r("clr", stack -> stack.clr(), "Remove all values on the stack.");
 		r("dup", stack -> stack.dup(), "Push a copy of the first stack value.");
+		r("dup 2", stack -> stack.dup(2), "Push two copies of the first stack value.");
+		r("dup 3", stack -> stack.dup(3), "Push three copies of the first stack value.");
+		r("dup x", stack -> stack.dup(Math.abs(stack.pop().asInt())), "Push the second stack value the absolute value of the first stack value times.");
 		r("swp", stack -> stack.swap(), "Swap the top two stack values.");
 		r("ldv", stack -> stack.push(stack.getProgram().getRegisters().getGlobal().get(stack.pop())), "Push the value from the global variable table with the name of the first stack value.");
 		r("sdv", stack -> stack.getProgram().getRegisters().getGlobal().put(stack.pop(), stack.pop()), "Saves the second stack value to the the global variable table with the name of the first stack value.");
@@ -118,7 +119,7 @@ public class StandardOpcodes extends OpcodeRegistry {
 		r("*", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.MULTIPLY)), "Push the product of the second and first stack values.");
 		r("/", stack -> stack.push(stack.peek(2).operate(stack.pull(2), Operation.DIVIDE)), "Push the quotient of the second and first stack values.");
 		r("%", stack -> stack.push(stack.peek(2).asInt() % stack.pull(2).asInt()), "Push the modulus of the second and first stack values.");
-		// 70
+		// 73
 		r("remap.math", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.MATH), "Prioritize math opcodes for one byte instructions.");
 		r("remap.list", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.LIST), "Prioritize list opcodes for one byte instructions.");
 		r("remap.string", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.STRING), "Prioritize string opcodes for one byte instructions.");
@@ -126,7 +127,7 @@ public class StandardOpcodes extends OpcodeRegistry {
 		r("remap.bignumber", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.BIG_NUMBER), "Prioritize big number opcodes for one byte instructions.");
 		r("remap.graphics", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.GRAPHICS), "Prioritize graphics opcodes for one byte instructions.");
 		r("remap.integer", PRIORITIZATION, stack -> cache.prioritize(OpcodeMarker.GRAPHICS), "Prioritize integer opcodes for one byte instructions.");
-		// 76
+		// 79
 	}
 
 	private void processEsle(Stack stack) {

@@ -167,7 +167,7 @@ public class Compiler {
 			List<String> attempts = new ArrayList<>();
 			if (base.canCompress(load)) {
 				byte[] compressed = base.compress(load);
-				if (compressed.length < load.length() && compressed.length <= 256 && compressed.length > 0) {
+				if (compressed.length <= 256 && compressed.length > 0) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(opcodes.getChars(OpcodeMarker.COMPRESSION1).getCharacter());
 					sb.append(Chars.fromInt(compressed.length - 1).getCharacter());
@@ -179,7 +179,7 @@ public class Compiler {
 			}
 			if (shoco.canCompress(load)) {
 				byte[] compressed = shoco.compress(load);
-				if (compressed.length <= load.length() && compressed.length <= 256 && compressed.length > 0) {
+				if (compressed.length <= 256 && compressed.length > 0) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter());
 					sb.append(Chars.fromInt(compressed.length - 1).getCharacter());
@@ -210,7 +210,7 @@ public class Compiler {
 					String lower = load.toLowerCase();
 					if (smaz.canCompress(lower)) {
 						byte[] compressed = smaz.compress(lower);
-						if (compressed.length <= load.length() && compressed.length <= 256 && compressed.length > 0) {
+						if (compressed.length <= 256 && compressed.length > 0) {
 							StringBuilder sb = new StringBuilder();
 							sb.append(opcodes.getChars(OpcodeMarker.COMPRESSION3).getCharacter());
 							sb.append(Chars.fromInt(compressed.length - 1).getCharacter());
@@ -224,7 +224,7 @@ public class Compiler {
 			}
 			if (smaz.canCompress(load)) {
 				byte[] compressed = smaz.compress(load);
-				if (compressed.length <= result.length() && compressed.length <= 256 && compressed.length > 0) {
+				if (compressed.length <= 256 && compressed.length > 0) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(opcodes.getChars(OpcodeMarker.COMPRESSION2).getCharacter());
 					sb.append(Chars.fromInt(compressed.length - 1).getCharacter());
@@ -236,7 +236,7 @@ public class Compiler {
 			}
 			if (lzma.canCompress(load)) {
 				byte[] compressed = lzma.compress(load);
-				if (compressed.length <= load.length() && compressed.length > 0) {
+				if (compressed.length > 0) {
 					StringBuilder sb = new StringBuilder();
 					sb.append(opcodes.getChars(OpcodeMarker.LZMA).getCharacter());
 					sb.append(Chars.fromInt(compressed.length - 1 >= 255 ? 255 : compressed.length - 1).getCharacter());
@@ -249,8 +249,9 @@ public class Compiler {
 					attempts.add(sb.toString());
 				}
 			}
-			if (attempts.size() > 0) {
-				result.append(Collections.min(attempts, new Comparator<String>() {
+			List<String> less = attempts.stream().filter(s -> s.length() - 2 <= load.length()).collect(Collectors.toList());
+			if (less.size() > 0) {
+				result.append(Collections.min(less, new Comparator<String>() {
 					@Override
 					public int compare(String s1, String s2) {
 						return s1.length() - s2.length();
@@ -258,24 +259,22 @@ public class Compiler {
 				}));
 				return Optional.empty();
 			}
-			boolean mustShoco = false;
+			boolean mustCompress = false;
 			for (char c : load.toCharArray()) {
 				if (!codepage.contains(String.valueOf(c))) {
-					mustShoco = true;
+					mustCompress = true;
 					break;
 				}
 			}
-			if (load.contains(Chars.fromInt(~opcodes.getChars(OpcodeMarker.SPECIAL).getId() & 0xff).getCharacter()) || mustShoco) {
-				if (shoco.canCompress(load)) {
-					byte[] compressed = shoco.compress(load);
-					if (compressed.length <= 256 && compressed.length > 0) {
-						result.append(opcodes.getChars(OpcodeMarker.SPECIAL).getCharacter());
-						result.append(Chars.fromInt(compressed.length - 1).getCharacter());
-						for (byte b : compressed) {
-							result.append(Chars.fromByte(b).getCharacter());
+			if (load.contains(Chars.fromInt(~opcodes.getChars(OpcodeMarker.SPECIAL).getId() & 0xff).getCharacter()) || mustCompress) {
+				if (attempts.size() > 0) {
+					result.append(Collections.min(attempts, new Comparator<String>() {
+						@Override
+						public int compare(String s1, String s2) {
+							return s1.length() - s2.length();
 						}
-						return Optional.empty();
-					}
+					}));
+					return Optional.empty();
 				}
 				return Optional.of(output.create("Failed to process literal. Line: " + (index + 1)));
 			}

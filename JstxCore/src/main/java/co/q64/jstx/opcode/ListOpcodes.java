@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -40,6 +42,17 @@ public class ListOpcodes extends OpcodeRegistry {
 		r("list.length", stack -> stack.push(stack.pop().iterate().stream().filter(o -> o != nul).count()), "Push the size of the first stack value, excluding null elements.");
 		r("list.of", stack -> stack.push(IntStream.range(0, stack.pop().asInt()).mapToObj(i -> stack.pop()).collect(Collectors.toList())), "Push stack values into a list of the size of the first stack value starting with the second stack value.");
 		r("list.empty", stack -> stack.push(Collections.emptyList()), "Push an empty list.");
+		r("list.uniform", stack -> stack.push(stack.pop().iterate().stream().distinct().limit(2).count() <= 1), "Push true if all elements in the list are equal, else false.");
+		r("list.sum", stack -> stack.push(stack.pop().iterate().stream().mapToLong(Value::asLong).sum()), "Push the sum of an integer list.");
+		r("list.sumf", stack -> stack.push(stack.pop().iterate().stream().mapToLong(Value::asLong).sum()), "Push the sum of a floating point list.");
+		r("list.product", stack -> stack.push(stack.pop().iterate().stream().mapToLong(Value::asLong).reduce(1, (a, b) -> a * b)), "Push the product of an integer list.");
+		r("list.productf", stack -> stack.push(stack.pop().iterate().stream().mapToLong(Value::asLong).reduce(1, (a, b) -> a * b)), "Push the product of a floating point integer list.");
+		r("list.mode", stack -> stack.push(stack.pop().iterate().stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting())).entrySet().stream().max(Comparator.comparing(Entry::getValue)).map(Entry::getKey).orElse(nul)), "Push the most common element in the first stack value, the mode of the list.");
+		r("list.mean", stack -> stack.push(stack.pop().iterate().stream().mapToDouble(Value::asDouble).average().orElse(Double.NaN)), "Push the average of the elements in the first stack value, the mean of the list.");
+		r("list.max", stack -> stack.push(stack.pop().iterate().stream().mapToInt(Value::asInt).max().orElse(nul.asInt())), "Push the greatest integer in the first stack value.");
+		r("list.maxf", stack -> stack.push(stack.pop().iterate().stream().mapToDouble(Value::asDouble).max().orElse(nul.asInt())), "Push the greatest floating point number in the first stack value.");
+		r("list.min", stack -> stack.push(stack.pop().iterate().stream().mapToInt(Value::asInt).min().orElse(nul.asInt())), "Push the least integer in the first stack value.");
+		r("list.minf", stack -> stack.push(stack.pop().iterate().stream().mapToDouble(Value::asDouble).min().orElse(nul.asInt())), "Push the least floating point number in the first stack value.");
 		r("list.reverse", stack -> {
 			List<Value> vals = stack.pop().iterate();
 			Collections.reverse(vals);
