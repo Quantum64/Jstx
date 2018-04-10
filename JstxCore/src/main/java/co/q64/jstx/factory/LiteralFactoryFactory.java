@@ -9,5 +9,6 @@ import lombok.Getter;
 @Singleton
 public class LiteralFactoryFactory {
 	protected @Inject LiteralFactoryFactory() {}
+
 	protected @Inject @Getter LiteralFactory factory;
 }

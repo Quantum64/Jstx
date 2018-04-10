@@ -2,10 +2,8 @@ package co.q64.jstx.lang.opcode;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -14,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import co.q64.jstx.lang.Stack;
+import lombok.Getter;
 
 // 0 - 156 = 1 byte
 // 157 - 24990 = 2 byte
@@ -23,57 +22,24 @@ public class Opcodes {
 	protected @Inject Opcodes() {}
 
 	protected @Inject OpcodeLibrary library;
+	protected @Inject OpcodeCache cache;
+	protected @Inject OpcodeFactory opcodeFactory;
 
-	private int index = 0;
-	private Map<Integer, Consumer<Stack>> opcodes = new HashMap<>();
-	private Map<String, Integer> names = new LinkedHashMap<>();
-	private Map<String, String> descriptions = new HashMap<>();
-	private Map<OpcodeMarker, List<Integer>> markers = new HashMap<OpcodeMarker, List<Integer>>();
+	private @Getter List<Opcode> opcodes = new ArrayList<>();
 
 	@Inject
 	protected void init() {
-		library.get().forEach(registry -> registry.register(this));
-	}
-
-	public void reg(String name, Consumer<Stack> exec) {
-		reg(name, exec, null);
-	}
-
-	public void reg(String name, OpcodeMarker marker, Consumer<Stack> exec) {
-		reg(name, marker, exec, null);
-	}
-
-	public void reg(String name, Consumer<Stack> exec, String description) {
-		if (names.containsKey(name)) {
-			return;
-		}
-		names.put(name, index);
-		opcodes.put(index, exec);
-		index++;
-		if (description != null) {
-			descriptions.put(name, description);
-		}
-	}
-
-	public void reg(String name, OpcodeMarker marker, Consumer<Stack> exec, String description) {
-		reg(name, exec);
-		List<Integer> flags = markers.get(marker);
-		if (flags == null) {
-			flags = new ArrayList<>();
-			markers.put(marker, flags);
-		}
-		flags.add(index - 1);
-		if (description != null) {
-			descriptions.put(name, description);
-		}
+		library.get().forEach(registry -> registry.registerExternal(this));
+		cache.init(opcodes);
+		cache.remapOpcodes(Collections.emptyList());
 	}
 
 	public Consumer<Stack> getExecutor(int id) {
-		return opcodes.get(id);
+		return cache.getOpcodes().get(id);
 	}
 
 	public Optional<String> getName(int id) {
-		for (Entry<String, Integer> e : names.entrySet()) {
+		for (Entry<String, Integer> e : cache.getNames().entrySet()) {
 			if (e.getValue().equals(id)) {
 				return Optional.of(e.getKey());
 			}
@@ -82,11 +48,11 @@ public class Opcodes {
 	}
 
 	public int getFlag(OpcodeMarker marker) {
-		return markers.get(marker).get(0);
+		return cache.getMarkers().get(marker).get(0);
 	}
 
 	public List<Integer> getFlags(OpcodeMarker marker) {
-		return markers.get(marker);
+		return cache.getMarkers().get(marker);
 	}
 
 	public Chars getChars(OpcodeMarker marker) {
@@ -94,19 +60,23 @@ public class Opcodes {
 	}
 
 	public String getDescription(String name) {
-		return Optional.ofNullable(descriptions.get(name)).orElse("No description available.");
+		return Optional.ofNullable(cache.getDescriptions().get(name)).orElse("No description available.");
 	}
 
 	public List<String> getNames() {
-		return new ArrayList<>(names.keySet());
+		return new ArrayList<>(cache.getNames().keySet());
 	}
 
 	public String getDebugInfo() {
-		return "Using " + index + "/" + lookupId(new Chars[] { Chars.xff, Chars.xff }).get() + " opcodes (" + (lookupId(new Chars[] { Chars.xff, Chars.xff }).get() - index) + " remaining)";
+		return "Using " + cache.getMapped() + "/" + lookupId(new Chars[] { Chars.xff, Chars.xff }).get() + " opcodes (" + (lookupId(new Chars[] { Chars.xff, Chars.xff }).get() - cache.getMapped()) + " remaining)";
+	}
+
+	public void reset() {
+		cache.resetPrioritization();
 	}
 
 	public Optional<List<Chars>> lookupName(String name) {
-		Integer id = names.get(name);
+		Integer id = cache.getNames().get(name);
 		if (id == null) {
 			return Optional.empty();
 		}

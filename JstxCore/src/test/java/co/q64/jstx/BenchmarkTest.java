@@ -55,7 +55,7 @@ public class BenchmarkTest {
 		Jstx jstx = DaggerJstxMain_JstxMainComponent.create().getJstx();
 		CompilerOutput compiled = jstx.compileProgram(Arrays.asList("load Hello,", "load World!", "flatten soft"));
 		Assert.assertEquals(true, compiled.isSuccess());
-		jstx.runProgram(compiled.getProgram(), new String[0], new BlackholeOutput(blackhole));
+		jstx.runProgram(compiled.getProgram(), "", new BlackholeOutput(blackhole));
 	}
 
 	@AllArgsConstructor

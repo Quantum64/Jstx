@@ -163,12 +163,15 @@ public class JstxMain {
 		}
 	}
 
-	private String[] getArgs(ArgumentIterator itr) {
-		List<String> result = new ArrayList<>();
+	private String getArgs(ArgumentIterator itr) {
+		StringBuilder result = new StringBuilder();
 		while (itr.hasNext()) {
-			result.add(itr.next());
+			result.append(itr.next());
+			if (itr.hasNext()) {
+				result.append(" ");
+			}
 		}
-		return result.toArray(new String[0]);
+		return result.toString();
 	}
 
 	@Singleton

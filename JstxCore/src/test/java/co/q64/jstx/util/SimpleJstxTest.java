@@ -22,7 +22,7 @@ public class SimpleJstxTest {
 		CompilerOutput comp = jstx.compileProgram(Arrays.asList(program));
 		Assert.assertEquals(comp.isSuccess(), true);
 		OutputBuffer output = new OutputBuffer();
-		jstx.runProgram(comp.getProgram(), new String[0], output);
+		jstx.runProgram(comp.getProgram(), "", output);
 		Assert.assertEquals(expected, output.firstLine());
 	}
 
@@ -34,7 +34,7 @@ public class SimpleJstxTest {
 		CompilerOutput comp = jstx.compileProgram(Arrays.asList(program));
 		Assert.assertEquals(comp.isSuccess(), true);
 		OutputBuffer output = new OutputBuffer();
-		jstx.runProgram(comp.getProgram(), new String[0], output);
+		jstx.runProgram(comp.getProgram(), "", output);
 		String[] lines = output.toString().split(Pattern.quote("\n"));
 		for (int i = 0; i < expected.size(); i++) {
 			if (i >= lines.length) {
@@ -60,7 +60,7 @@ public class SimpleJstxTest {
 		CompilerOutput comp = jstx.compileProgram(Arrays.asList(program));
 		Assert.assertEquals(comp.isSuccess(), true);
 		OutputBuffer output = new OutputBuffer();
-		jstx.runProgram(comp.getProgram(), new String[0], output);
+		jstx.runProgram(comp.getProgram(), "", output);
 		try {
 			Assert.assertEquals(expected, Double.parseDouble(output.firstLine()), delta);
 		} catch (NumberFormatException e) {

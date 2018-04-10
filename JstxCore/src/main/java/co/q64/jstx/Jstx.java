@@ -25,7 +25,7 @@ public class Jstx {
 		return compiler.compile(lines);
 	}
 
-	public void runProgram(String compiled, String[] args, Output output) {
+	public void runProgram(String compiled, String args, Output output) {
 		Program program = programFactory.create(compiled, args, output);
 		program.execute();
 	}

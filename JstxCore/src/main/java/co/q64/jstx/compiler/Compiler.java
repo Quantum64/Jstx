@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -18,7 +19,9 @@ import co.q64.jstx.compression.Base;
 import co.q64.jstx.compression.Lzma;
 import co.q64.jstx.compression.Shoco;
 import co.q64.jstx.compression.Smaz;
+import co.q64.jstx.lang.Stack;
 import co.q64.jstx.lang.opcode.Chars;
+import co.q64.jstx.lang.opcode.OpcodeCache;
 import co.q64.jstx.lang.opcode.OpcodeMarker;
 import co.q64.jstx.lang.opcode.Opcodes;
 
@@ -27,6 +30,7 @@ public class Compiler {
 	protected @Inject Compiler() {}
 
 	protected @Inject Opcodes opcodes;
+	protected @Inject OpcodeCache cache;
 	protected @Inject Smaz smaz;
 	protected @Inject Base base;
 	protected @Inject Shoco shoco;
@@ -36,6 +40,7 @@ public class Compiler {
 	private String codepage = Arrays.stream(Chars.values()).map(Chars::getCharacter).collect(Collectors.joining());
 
 	public CompilerOutput compile(List<String> input) {
+		cache.resetPrioritization();
 		List<String> instructions = new ArrayList<>();
 		for (String current : input) {
 			if (current.startsWith("load")) {
@@ -111,11 +116,23 @@ public class Compiler {
 	private Optional<CompilerOutput> processInstruction(String ins, StringBuilder result, int index) {
 		Optional<List<Chars>> opt = opcodes.lookupName(ins);
 		if (opt.isPresent()) {
+			StringBuilder current = new StringBuilder();
 			for (Chars c : opt.get()) {
 				if (c == null) {
-					return Optional.empty();
+					break;
 				}
-				result.append(c.getCharacter());
+				current.append(c.getCharacter());
+			}
+			result.append(current.toString());
+			int targetId = opcodes.lookupSymbol(current.toString()).orElse(0);
+			Optional<Consumer<Stack>> executor = Optional.empty();
+			for (int id : opcodes.getFlags(OpcodeMarker.PRIORITIZATION)) {
+				if (targetId == id) {
+					executor = Optional.of(opcodes.getExecutor(id));
+				}
+			}
+			if (executor.isPresent()) {
+				executor.get().accept(null);
 			}
 			return Optional.empty();
 		}
