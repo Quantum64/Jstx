@@ -36,6 +36,7 @@ public class MathOpcodes extends OpcodeRegistry {
 		r("math.e", stack -> stack.push(Math.E), "Push the number e where the n-th derivative of f(x)=e^x equals the function itself, Euler's number.");
 		r("math.pi", stack -> stack.push(Math.PI), "Push the ratio of the circumference of any circle to its diameter, the number Pi.");
 		r("math.tau", stack -> stack.push(Math.PI * 2), "Push the ratio of the circumference of any circle to its radius, the number Tau.");
+		r("math.phi", stack -> stack.push((1 + Math.sqrt(5)) / 2d), "Push  golden ratio, the number Phi.");
 
 		r("math.abs", stack -> stack.push(Math.abs(stack.pop().asLong())), "Push the absolute integer value of the first stack value.");
 		r("math.absf", stack -> stack.push(Math.abs(stack.pop().asDouble())), "Push the absolute floating point value of the first stack value.");
@@ -102,6 +103,10 @@ public class MathOpcodes extends OpcodeRegistry {
 		r("math.asFloat", stack -> stack.push(stack.pop().asDouble()), "Push the first stack value converted to a floating point number.");
 		r("math.incrementDigits", stack -> stack.push(stack.pop().toString().chars().map(i -> Integer.parseInt(Character.valueOf((char) i).toString()) + 1).mapToObj(String::valueOf).collect(Collectors.joining())), "Push the first stack value with digits incremented by 1.");
 		r("math.decrementDigits", stack -> stack.push(stack.pop().toString().chars().map(i -> Integer.parseInt(Character.valueOf((char) i).toString()) - 1).mapToObj(String::valueOf).collect(Collectors.joining())), "Push the first stack value with digits decremented by 1.");
+		r("math.negate", stack -> stack.push(-stack.pop().asLong()), "Push the first stack value with the sign flipped.");
+		r("math.negatef", stack -> stack.push(-stack.pop().asDouble()), "Push the first stack value as a floating point number with the sign flipped.");
+		r("math.square", stack -> stack.push(stack.peek().asLong() * stack.pop().asLong()), "Push the square of the second and first stack values.");
+		r("math.insignificant", stack -> stack.push(Math.abs(stack.pop().asDouble()) <= 1), "Push true if the absolute value of the first stack value is less than or equal to 1, else false.");
 	}
 
 	private boolean prime(int n) {

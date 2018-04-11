@@ -52,6 +52,7 @@ public class StringOpcodes extends OpcodeRegistry {
 		r("string.toUpperCase", stack -> stack.push(stack.pop().toString().toUpperCase()), "Push the first stack value with all characters lowercased.");
 		r("string.trim", stack -> stack.push(stack.pop().toString().trim()), "Push the first stack value sans extra whitespace.");
 
+		r("string.splitSpace", stack -> stack.push(Arrays.asList((Object[]) stack.pop().toString().split(" "))), "Push a list of the first stack values split by spaces.");
 		r("string.subzero", stack -> stack.push(stack.peek(2).toString().substring(0, stack.pull(2).asInt())), "Push the characters of the second stack value indexed before or at the first stack value.");
 		r("string.reverse", stack -> stack.push(new StringBuilder(stack.pop().toString()).reverse()), "Push the first stack value with characters in reverse order.");
 		r("string.reverseconcat", stack -> stack.push(stack.pop().toString().concat(stack.pop().toString())), "Push the first stack value concatenated with the second stack value.");
@@ -64,6 +65,7 @@ public class StringOpcodes extends OpcodeRegistry {
 		r("string.repeat", stack -> stack.push(String.join("", Collections.nCopies(2, stack.pop().toString()))), "Push the first stack value repeated twice.");
 		r("string.delete", stack -> stack.push(stack.peek(2).toString().replace(stack.pull(2).toString(), "")), "Push the second stack value with occurences of the first stack value removed.");
 		r("string.blank", stack -> stack.push(stack.peek(2).toString().replace(stack.peek(1).toString(), Collections.nCopies(stack.pull(2).toString().length(), " ").stream().collect(Collectors.joining()))), "Push the second stack value with occurences of the first stack value replaced with whitespace.");
+		r("string.swapCase", stack -> stack.pop().toString().chars().mapToObj(i -> Character.isUpperCase((char) i) ? Character.toLowerCase((char) i) : Character.toUpperCase((char) i)).map(Object::toString).collect(Collectors.joining()), "Push the first stack value with inverted case.");
 
 		r("string.deleteEnd", stack -> {
 			String target = stack.pop().toString();
