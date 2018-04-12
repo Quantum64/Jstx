@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
 		<groupId>co.q64.jstx</groupId>
@@ -19,14 +20,14 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.6.1</version>
 				<configuration>
-					<source>1.9</source>
-					<target>1.9</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<encoding>UTF-8</encoding>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>com.google.dagger</groupId>
 							<artifactId>dagger-compiler</artifactId>
-							<version>2.14.1</version>
+							<version>2.15</version>
 						</path>
 						<path>
 							<groupId>com.google.auto.factory</groupId>
@@ -104,9 +105,11 @@
 						<configuration>
 							<tasks>
 								<delete>
-									<dirset dir="${project.build.directory}/${project.build.finalName}"
+									<dirset
+										dir="${project.build.directory}/${project.build.finalName}"
 										includes="META-INF" />
-									<dirset dir="${project.build.directory}/${project.build.finalName}"
+									<dirset
+										dir="${project.build.directory}/${project.build.finalName}"
 										includes="WEB-INF" />
 								</delete>
 							</tasks>
@@ -166,13 +169,9 @@
 
 	<properties>
 
-		<!-- Setting maven.compiler.source to something different to 1.8 needs 
-			that you configure the sourceLevel in gwt-maven-plugin since GWT compiler 
-			2.8 requires 1.8 (see gwt-maven-plugin block below) -->
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 
-		<!-- Don't let your Mac use a crazy non-standard encoding -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
@@ -181,7 +180,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- ensure all GWT deps use the same version (unless overridden) -->
 			<dependency>
 				<groupId>com.google.gwt</groupId>
 				<artifactId>gwt</artifactId>

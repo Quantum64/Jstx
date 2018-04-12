@@ -81,12 +81,13 @@ public class Stack {
 		return peek(1);
 	}
 
-	public void swap() {
+	public Stack swap() {
 		if (stack.size() > 1) {
 			Value buffer = stack.get(stack.size() - 1);
 			stack.set(stack.size() - 1, stack.get(stack.size() - 2));
 			stack.set(stack.size() - 2, buffer);
 		}
+		return this;
 	}
 
 	public Stack push(Value value) {

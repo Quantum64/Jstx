@@ -10,6 +10,7 @@ import co.q64.jstx.opcode.BigNumberOpcodes;
 import co.q64.jstx.opcode.DictionaryOpcodes;
 import co.q64.jstx.opcode.GraphicsOpcodes;
 import co.q64.jstx.opcode.IntegerOpcodes;
+import co.q64.jstx.opcode.JavascriptOpcodes;
 import co.q64.jstx.opcode.ListOpcodes;
 import co.q64.jstx.opcode.LongRegisterOpcodes;
 import co.q64.jstx.opcode.MathOpcodes;
@@ -31,10 +32,11 @@ public class OpcodeLibrary {
 	protected @Inject MetaOpcodes meta;
 	protected @Inject GraphicsOpcodes graphics;
 	protected @Inject BigNumberOpcodes bigNumber;
+	protected @Inject JavascriptOpcodes javascript;
 	protected @Inject LongRegisterOpcodes registry;
 	protected @Inject DictionaryOpcodes dictionary;
 
 	protected List<OpcodeRegistry> get() {
-		return Arrays.asList(standard, stack, string, math, integer, list, meta, graphics, bigNumber, registry, dictionary);
+		return Arrays.asList(standard, stack, string, math, integer, list, meta, graphics, bigNumber, javascript, registry, dictionary);
 	}
 }
